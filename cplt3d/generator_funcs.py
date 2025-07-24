@@ -542,6 +542,39 @@ def parallel_animate(fig,func,frames,result_name,
 def spin_3d_plot(fig,axs,result_name,times = 1,step = 1,parallel=True,
                  axis = 'z',fps = 50,Animation_Generation_Folder = None,
                  delete = True,merge = True,**kwargs):
+    '''A function that generates an animation rotating the input 3d plot. Can run in parallel to speed up animation for complex plots.
+        Parameters
+        ----------
+        fig : Figure
+            The figure which contains the axes to rotate
+        axs : Axis or list
+            The axis on which to plot the points. If given a list it will animate all of the axes in the list (useful for animating a multi-cell plot). Make sure that all the axes are in the 3d projection!
+        result_name : str
+            The name of the file to save the animation to
+        times: float
+            The number of times to rotate. i.e. the function will rotate the plot int(360 * times) degrees.
+        step: int
+            The step size of the animation. i.e. the function will rotate the plot in steps of `step` degrees
+        parallel: bool
+            Whether or not to parallelize saving the frames of the animation.
+        axis: str (or 3d vector)
+            The axis to rotate around. Currently, only 'x', 'y', and 'z' are implemented. TODO implement 3d vector to rotate about arbitrary axis. 
+        fps: int
+            The frames per second of the animation. 
+        Animation_Generation_Folder: int
+            The folder to generate the animation frames without. If set to None will create folder with random integer name in the working directory.
+        delete: bool
+            Whether or not to delete the Animation_Generation_Folder and all of the frames within upon completion of the animation
+        merge: bool
+            Whether or not to merge the frames into an actual animation. 
+        **kwargs:
+            Arguments for the general parallel animation generation function.
+
+        Returns
+        -------
+        None
+    '''
+
     if not merge:
         delete = False
     
