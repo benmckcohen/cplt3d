@@ -442,6 +442,38 @@ def tree_histogram(pts,vals,X,Y,Z,dX,dY,dZ,statistic = 'sum'):
 def parallel_animate(fig,func,frames,result_name,
                      out = 'gif',fps = 50,parallel = True,Animation_Generation_Folder = None,
                      delete = True,merge = True,**kwargs):
+    '''A function that generates an animation based on an input function. Can be run in parallel for complex plots.
+        Parameters
+        ----------
+        fig : Figure
+            The figure which contains the axes to animate
+        func : Function
+            A function that takes in a frame from frames and performs any modifications necessary to the axes.
+        frames : list
+            A list of inputs to func
+        result_name: str
+            The filename that the code saves the animation to
+        out: str
+            The filetype of the animation. Default is `.gif`
+        fps: int
+            The frames per second of the animation. 
+        parallel: bool
+            Whether or not to parallelize saving the frames of the animation.    
+        Animation_Generation_Folder: str
+            The folder to generate the animation frames without. If set to None will create folder with random integer name in the working directory.
+        delete: bool
+            Whether or not to delete the Animation_Generation_Folder and all of the frames within upon completion of the animation
+        merge: bool
+            Whether or not to merge the frames into an actual animation. 
+        **kwargs:
+            Arguments for the `savefig` operation on `fig`
+
+        Returns
+        -------
+        None
+    '''
+    
+    
     if not merge:
         delete = False
     
@@ -561,7 +593,7 @@ def spin_3d_plot(fig,axs,result_name,times = 1,step = 1,parallel=True,
             The axis to rotate around. Currently, only 'x', 'y', and 'z' are implemented. TODO implement 3d vector to rotate about arbitrary axis. 
         fps: int
             The frames per second of the animation. 
-        Animation_Generation_Folder: int
+        Animation_Generation_Folder: str
             The folder to generate the animation frames without. If set to None will create folder with random integer name in the working directory.
         delete: bool
             Whether or not to delete the Animation_Generation_Folder and all of the frames within upon completion of the animation
@@ -569,7 +601,10 @@ def spin_3d_plot(fig,axs,result_name,times = 1,step = 1,parallel=True,
             Whether or not to merge the frames into an actual animation. 
         **kwargs:
             Arguments for the general parallel animation generation function.
-
+                out: str
+                    The filetype of the animation. Default is `.gif`
+                **kwargs
+                    What to input into the `fig` `savefig` method when saving frames (e.g. dpi)
         Returns
         -------
         None
