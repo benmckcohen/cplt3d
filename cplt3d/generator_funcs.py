@@ -281,11 +281,12 @@ def compute_min_resolution(pts,vals,min_x,max_x,min_y,max_y,min_z,max_z,
 def compute_max_resolution(pts,vals,min_x,max_x,min_y,max_y,min_z,max_z,
              min_resolution = 0,max_resolution = 10,dist = None, bins = 0.1,focus = 'slope',
              **kwargs):
-    print('found max_resolution is None, recomputing...')
+    print('finding average volume per particle...')
     number_of_particles = len(vals) # or number of max bins so if perfectly uniform get 1 particle per bin
     max_resolution = np.log2(number_of_particles)/3
     max_resolution = int(max_resolution) + 1
-    print(f'found max_resolution={max_resolution}')
+    volume = (max_x - min_x) * (max_y - min_y) * (max_z - min_z)
+    print(f'found max_resolution={max_resolution} - volume={volume/2**(3 * max_resolution)} units^3')
     if max_resolution <= min_resolution:
         print(f'this is the same as or less than the min_resolution... setting to 1 more than min_resolution')
         max_resolution = min_resolution+1
@@ -317,7 +318,7 @@ def tree_generator(interpolator):
             print(f'using max_resolution={max_resolution}')
 
         if dist is None:
-            print('Found dist is None, recomputing min_resolution...')
+            print('Found dist is None, recomputing dist...')
             dist = compute_dist(pts,vals,min_x,max_x,min_y,max_y,min_z,max_z,
              min_resolution = min_resolution,max_resolution = max_resolution,dist = dist, bins = bins,focus = focus,
              **kwargs)
@@ -681,8 +682,9 @@ def tree_histogram(pts,vals,X,Y,Z,dX,dY,dZ,statistic = 'sum'):
             The maximum resolution to use. Note that this is log2(bins) at maximal bin size
         dist: list of floats
             The distribution of the number of each bin size. Must sum to 1. For example [0.5,0.5] would cause the code to make as close to half the bins as possible level 1 bins and half the bins level 2 bins. If `None` then will automatically generate the distribution.
-        bins: float
-            The percentage of volume taken up by the smallest bin size. Should be very small, especially for small bins, to prevent rendering issues. 
+        bins: int or float
+            int:  The total number of bins. This will not be the exact number of bins plotted, but will be the ballpark number which is aimed for while the program allocates bin sizes using `dist`.
+            float: The percentage of volume taken up by the smallest bin size. Should be very small, especially for small bins, to prevent rendering issues. 
         focus: string
             How the code determines where to make smaller bins. The current two foci are 'slope' which extracts a percent with the largest slopes and 'magnitude' which extracts a percent with the largest magnitude.
         **kwargs:

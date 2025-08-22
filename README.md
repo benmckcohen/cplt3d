@@ -20,11 +20,12 @@ rm -r cplt3d
 
 `cplt3d` has four functions to allow 3d voxel plotting.
 
-#### cplt3d.uniform_histogram
+#### `cplt3d.uniform_histogram`
 
 `cplt3d.uniform_histogram` allows users to plot 3d histograms of datasets at a given resolution. Note that the rendering of high resolution 3d histograms can be very computationally expensive. Therefore, it is highly recommended to set filled to at least $0.1-0.2$ for non-trivial bin sizes.
 
 **Parameters**
+        -------------------------------------
 - ax : Axis
   - The axis on which to plot the points
 - pts : array of shape (N,3)
@@ -74,6 +75,7 @@ rm -r cplt3d
   - Values of the bins.
 
 **Example**
+        -------------------------------------
 As an example, we can generate a histogram of a Gaussian distribution. First we can generate the distribution:
 ```python
 # take some samples from a unimodal distribution
@@ -89,11 +91,14 @@ Then we can plot
 from cplt3d.generator_funcs import uniform_histogram
 ```
 ```python
-# Generate the colormap
+# Prepare the colormap
 cmap = colormaps.get_cmap('viridis')
 use_cmap = cmap(np.arange(cmap.N))
 use_cmap[:,-1] = np.linspace(0,1,cmap.N)**1.7
 use_cmap = colors.ListedColormap(use_cmap)
+# Prepare the axis
+fig = plt.figure(figsize = (3,3))
+ax = fig.add_subplot(projection = '3d')
 ```
 ```python
 # Actually plot
@@ -105,63 +110,204 @@ uniform_histogram(ax,pts_samples,GAUSSIAN_samples,bins = N_bins,filled = 0.3,cma
 ax.set_xlabel("X")
 ax.set_ylabel("Y")
 ax.set_zlabel("Z")
+ax.zaxis.labelpad=-3.5
 fig.savefig('Images/3_Histogram-Uniform_Gaussian.png',dpi = 300)
 ```
 Which leads to the figure:
 
 ![til](/Examples/Gaussian/Images/3_Histogram-Uniform_Gaussian.png)
 
-#### cplt3d.uniform_nearest_interpolator
+#### `cplt3d.uniform_nearest_interpolator` and `cplt3d.uniform_nearest_interpolator`
 
-`cplt3d.uniform_nearest_interpolator` interpolates a function using nearest neighbor interpolation to the voxels. This is faster than linear interpolation, which can be done through `cplt3d.linear_nearest_interpolator`.
+`cplt3d.uniform_nearest_interpolator` interpolates a function using nearest neighbor interpolation to the voxels. This is faster than linear interpolation, which can be done through `cplt3d.linear_nearest_interpolator`. Both have the same input and output structure.
 
 **Parameters**
+        -------------------------------------
   - ax : Axis
       - The axis on which to plot the points
   - pts : array of shape (N,3)
       - The points to plot
   - vals: array of shape (N,)
       - The values to plot that are associated with each point
-  cmap: Colormap
-      The colormap to use while plotting, strongly recommended to have a gradient in alpha.
-  norm: Function
-      The normalization function to use. Colors are computed using cmap(NORM(x)) where NORM is the instantiation of norm with the correct vmax and vmin.
-  vmin: float
-      The minimum of the dynamic range. Set automatically if None.
-  vmax: float
-      The maximum of the dynamic range. Set automatically if None.
-  _range: array of shape (3,2)
-      The minima and maxima to generate bins within. Set automatically if None
-  filled: float or function
-      The method of making boxes invisible. If float the code removes the bottom(top) % of the bins. If function, must be of form f(x,y,z,dx,dy,dz,result,color), be vectorized, and return a np array of bools which are True if the box is plotted and False if not.
-  filled_invert: bool
-      If true, it inverts filled (so removes the top % of the data instead of bottom %). Has no impact if filled is a function.
-  edgecolor_function: Function
-      A function that takes in the facecolors and returns the edgecolors array. Can be useful if you want to shade your edge colors differently from your face colors (or change alpha)
-  bins: int or list of ints of shape (3,)
-      The number of bins to use. If a list, sets [X bins, Y bins, Z bins]. If an int, generates that number on each axis. 
-  kwargs:
-      Other arguments for voxelize (and the polygon collection). facecolor and edgecolor are overriden.
+  - cmap: Colormap
+      - The colormap to use while plotting, strongly recommended to have a gradient in alpha.
+  - norm: Function
+      - The normalization function to use. Colors are computed using cmap(NORM(x)) where NORM is the instantiation of norm with the correct vmax and vmin.
+  - vmin: float
+      - The minimum of the dynamic range. Set automatically if None.
+  - vmax: float
+      - The maximum of the dynamic range. Set automatically if None.
+  - _range: array of shape (3,2)
+      - The minima and maxima to generate bins within. Set automatically if None
+  - filled: float or function
+      - The method of making boxes invisible. If float the code removes the bottom(top) % of the bins. If function, must be of form f(x,y,z,dx,dy,dz,result,color), be vectorized, and return a np array of bools which are True if the box is plotted and False if not.
+  - filled_invert: bool
+      - If true, it inverts filled (so removes the top % of the data instead of bottom %). Has no impact if filled is a function.
+  - edgecolor_function: Function
+      - A function that takes in the facecolors and returns the edgecolors array. Can be useful if you want to shade your edge colors differently from your face colors (or change alpha)
+  - bins: int or list of ints of shape (3,)
+      - The number of bins to use. If a list, sets [X bins, Y bins, Z bins]. If an int, generates that number on each axis. 
+  - kwargs:
+      - Other arguments for voxelize (and the polygon collection). facecolor and edgecolor are overriden.
 
 **Returns**
+        -------------------------------------
         
-        Function
-            The instantiation of the normalization function used.
-        Poly3dCollection
-            The polygons that are plotted.
-        Array
-            The x values of the bins.
-        Array
-            The y values of the bins.
-        Array
-            The z values of the bins.
-        Array
-            The dx widths of the bins.
-        Array
-            The dy widths of the bins.
-        Array
-            The dz widths of the bins.
-        Array
-            Values of the bins.
+  - Function
+    - The instantiation of the normalization function used.
+  - Poly3dCollection
+    - The polygons that are plotted.
+  - Array
+    - The x values of the bins.
+  - Array
+    - The y values of the bins.
+  - Array
+    - The z values of the bins.
+  - Array
+    - The dx widths of the bins.
+  - Array
+    - The dy widths of the bins.
+  - Array
+    - The dz widths of the bins.
+  - Array
+    - Values of the bins.
+
+**Example**
+        -------------------------------------
+
+As an example, we can generate a plot of a Gaussian distribution. Like before, we first generate the function:
+
+```python
+N = 32
+X,Y,Z = np.linspace(-4,4,N),np.linspace(-4,4,N),np.linspace(-4,4,N)
+X,Y,Z = np.meshgrid(X,Y,Z)
+X = X.flatten()
+Y = Y.flatten()
+Z = Z.flatten()
+pts = np.array([X,Y,Z]).T
+GAUSSIAN = scipy.stats.multivariate_normal.pdf(pts,mean = [0,0,0],cov = [[1,0,0],[0,2,0],[0,0,3]])
+```
+
+Then we can plot it
+```python
+# Import
+from cplt3d.generator_funcs import uniform_nearest_interpolator,uniform_linear_interpolator
+```
+```python
+# Prepare colormap
+cmap = colormaps.get_cmap('viridis')
+use_cmap = cmap(np.arange(cmap.N))
+use_cmap[:,-1] = np.linspace(0,1,cmap.N)**1.7
+use_cmap = colors.ListedColormap(use_cmap)
+# Prepare the axis
+fig = plt.figure(figsize = (3,3))
+ax = fig.add_subplot(projection = '3d')
+```
+
+```python
+# Actually plot
+uniform_nearest_interpolator(ax,pts,GAUSSIAN,bins = N_bins,filled = 0.3,cmap = use_cmap,verbose = True)
+# or
+uniform_linear_interpolator(ax,pts,GAUSSIAN,bins = N_bins,filled = 0.3,cmap = use_cmap,verbose = False)
+```
+
+```python
+# Save the plots
+ax.set_xlabel("X")
+ax.set_ylabel("Y")
+ax.set_zlabel("Z")
+ax.zaxis.labelpad=-3.5
+fig.savefig('Images/1_Nearest-Uniform_Gaussian.png',dpi = 300)
+# or
+fig.savefig('Images/2_Linear-Uniform_Gaussian.png',dpi = 300)
+```
+
+This produces plots that look like
+
+![til](/Examples/Gaussian/Images/1_Nearest-Uniform_Gaussian.png)
+
+#### `cplt3d.tree_histogram`
+
+This is an experimental histogram plotter that uses different bin sizes to "zoom-in" on structure in the histogram. This allows very small bins to be plotted without massive cost in displaying the histogram when much of the structure is present in small regions of the plot. Note that this is an **experimental** feature and it is probably better to use `uniform_histogram` in most applications. Ways to improve computing `dist` automatically for the plots to look good in more situations are welcome!
+
+  **Parameters**
+        -------------------------------------
+  - ax : Axis
+    - The axis on which to plot the points
+  - pts : array of shape (N,3)
+    - The points to plot
+  - vals: array of shape (N,)
+    - The values to plot that are associated with each point
+  - cmap: Colormap
+    - The colormap to use while plotting, strongly recommended to have a gradient in alpha.
+  - norm: Function
+    - The normalization function to use. Colors are computed using cmap(NORM(x)) where NORM is the instantiation of norm with the correct vmax and vmin.
+  - vmin: float
+    - The minimum of the dynamic range. Set automatically if None.
+  - vmax: float
+    - The maximum of the dynamic range. Set automatically if None.
+  - _range: array of shape (3,2)
+    - The minima and maxima to generate bins within. Set automatically if None
+  - filled: float or function
+    - The method of making boxes invisible. If float the code removes the bottom(top) % of the bins. If function, must be of form f(x,y,z,dx,dy,dz,result,color), be vectorized, and return a np array of bools which are True if the box is plotted and False if not.
+  - filled_invert: bool
+    - If true, it inverts filled (so removes the top % of the data instead of bottom %). Has no impact if filled is a function.
+  - edgecolor_function: Function
+    - A function that takes in the facecolors and returns the edgecolors array. Can be useful if you want to shade your edge colors differently from your face colors (or change alpha)
+  - min_resolution: int or None
+    - The minimum resolution to use. Note this is log2(bins) at minimal bin size. If `None`, will compute the min_resolution as one higher resolution step than the minimal resolution to have an empty bin (or max_resolution + 1 if max_resolution is specified and smaller). 
+  - max_resolution: int or None
+    - The maximum resolution to use. Note that this is log2(bins) at maximal **bin** size. If `None`, will compute the resolution such that the bin size is as close to the average volume per particle (or min_resolution + 1 if min_resolution < that).
+  - dist: list of floats or None
+    - The distribution of the number of each bin size. Must sum to 1 and have a length = max_resolution - min_resolution + 1. For example [0.5,0.5] would cause the code to make as close to half the bins as possible level min_resolution bins and half the bins level max_resolution bins. If `None` then will automatically generate the distribution as
+    $$
+    dist(L) = \frac{2^{3L}}{\sum_{n = \min + 1}^{\max} 2^{3n}}
+    $$
+    So each level takes up the same volume. The code then auto-computes the percentages of each level to keep to be as close to this distribution as possible. If a given level has too few bins to match the percentage, it pushes the new bins on to the next level. 
+
+
+  - bins: int or float
+    - int: The total number of bins. This will not be the exact number of bins plotted, but will be the ballpark number which is aimed for while the program allocates bin sizes using `dist`.
+    - float: The percentage of volume taken up by the smallest bin size. Should be very small, especially for small bins, to prevent rendering issues. 
+  - focus: string
+    - How the code determines where to make smaller bins. The current two foci are 'slope' which extracts a percent with the largest slopes and 'magnitude' which extracts a percent with the largest magnitude.
+  - kwargs:
+    - Other arguments for voxelize (and the polygon collection). facecolor and edgecolor are overriden.
+
+**Returns**
+        -------------------------------------
+        
+  Function
+      The instantiation of the normalization function used.
+  Poly3dCollection
+      The polygons that are plotted.
+  Array
+      The x values of the bins.
+  Array
+      The y values of the bins.
+  Array
+      The z values of the bins.
+  Array
+      The dx widths of the bins.
+  Array
+      The dy widths of the bins.
+  Array
+      The dz widths of the bins.
+  Array
+      Values of the bins.
+
+**Example**
+        -------------------------------------
+As an example, we can once again plot a histogram of the Gaussian samples. Using the same setup as for `uniform_histogram`, we can plot simply with
+
+```python
+poly = tree_histogram(ax,pts_samples,GAUSSIAN_samples,cmap = use_cmap,
+               filled=None,verbose = True,
+               min_resolution = None,max_resolution = None,edgecolor_function = lambda color:(0,0,0,0.01))
+```
+which gives us
+
+![til](/Examples/Gaussian/Images/4_Histogram-Tree_Gaussian_1.png) 
+
 
 ### Animating 3d Plots
