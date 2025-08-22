@@ -50,30 +50,63 @@ rm -r cplt3d
   - The number of bins to use. If a list, sets [X bins, Y bins, Z bins]. If an int, generates that number on each axis. 
 - statistic: string
   - The way to combine vals to generate the histogram. Input to scipy `binned_statistic_dd`. Note that cplt histograms generate densities, so whatever for statistic is computed, the number plotted is statistic/volume_of_bin.
-- **kwargs:
+- kwargs:
   - Other arguments for voxelize (and the polygon collection). facecolor and edgecolor are overriden.
+**Returns**
+- Function
+  - The instantiation of the normalization function used.
+- Poly3dCollection
+  - The polygons that are plotted.
+- Array
+  - The x values of the bins.
+- Array
+  - The y values of the bins.
+- Array
+  - The z values of the bins.
+- Array
+  - The dx widths of the bins.
+- Array
+  - The dy widths of the bins.
+- Array
+  - The dz widths of the bins.
+- Array
+  - Values of the bins.
 
-        Returns
-        -------
-        Function
-            The instantiation of the normalization function used.
-        Poly3dCollection
-            The polygons that are plotted.
-        Array
-            The x values of the bins.
-        Array
-            The y values of the bins.
-        Array
-            The z values of the bins.
-        Array
-            The dx widths of the bins.
-        Array
-            The dy widths of the bins.
-        Array
-            The dz widths of the bins.
-        Array
-            Values of the bins.
-
-
+**Example**
+As an example, we can generate a histogram of a Gaussian distribution. First we can generate the distribution:
+```python
+# take some samples from a unimodal distribution
+N = 10000
+std = 0.3
+np.random.seed(123456)
+pts_samples = np.random.multivariate_normal(mean = [0,0,0],cov = [[std,0,0],[0,std,0],[0,0,std]],size = N)
+GAUSSIAN_samples = np.ones(len(pts_samples))
+```
+Then we can plot
+```python
+# Import
+from cplt3d.generator_funcs import uniform_histogram
+```
+```python
+# Generate the colormap
+cmap = colormaps.get_cmap('viridis')
+use_cmap = cmap(np.arange(cmap.N))
+use_cmap[:,-1] = np.linspace(0,1,cmap.N)**1.7
+use_cmap = colors.ListedColormap(use_cmap)
+```
+```python
+# Actually plot
+N_bins = 2**5
+uniform_histogram(ax,pts_samples,GAUSSIAN_samples,bins = N_bins,filled = 0.3,cmap = use_cmap,verbose = False)
+```
+```python
+# Save the figure
+ax.set_xlabel("X")
+ax.set_ylabel("Y")
+ax.set_zlabel("Z")
+fig.savefig('Images/3_Histogram-Uniform Gaussian.png',dpi = 300)
+```
+Which leads to the figure:
+![til](/Examples/Gaussian/Images/3_Histogram-Uniform Gaussian.png)
 
 ### Animating 3d Plots
