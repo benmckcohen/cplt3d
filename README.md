@@ -104,9 +104,10 @@ uniform_histogram(ax,pts_samples,GAUSSIAN_samples,bins = N_bins,filled = 0.3,cma
 ax.set_xlabel("X")
 ax.set_ylabel("Y")
 ax.set_zlabel("Z")
-fig.savefig('Images/3_Histogram-Uniform Gaussian.png',dpi = 300)
+fig.savefig('Images/3_Histogram-Uniform_Gaussian.png',dpi = 300)
 ```
 Which leads to the figure:
-![til](/Examples/Gaussian/Images/3_Histogram-Uniform Gaussian.png)
+
+![til](/Examples/Gaussian/Images/3_Histogram-Uniform_Gaussian.png)
 
 ### Animating 3d Plots
