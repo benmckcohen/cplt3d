@@ -259,12 +259,17 @@ This is an experimental histogram plotter that uses different bin sizes to "zoom
   - max_resolution: int or None
     - The maximum resolution to use. Note that this is log2(bins) at maximal **bin** size. If `None`, will compute the resolution such that the bin size is as close to the average volume per particle (or min_resolution + 1 if min_resolution < that).
   - dist: list of floats or None
-    - The distribution of the number of each bin size. Must sum to 1 and have a length = max_resolution - min_resolution + 1. For example [0.5,0.5] would cause the code to make as close to half the bins as possible level min_resolution bins and half the bins level max_resolution bins. If `None` then will automatically generate the distribution as
+    - The distribution of the number of each bin size. Must sum to 1 and have a length = max_resolution - min_resolution + 1. For example [0.5,0.5] would cause the code to make as close to half the bins as possible level min_resolution bins and half the bins level max_resolution bins. 
+    - If `"equivolume"` or `None` then will automatically generate the distribution as
     $$
     dist(L) = \frac{2^{3L}}{\sum_{n = \min + 1}^{\max} 2^{3n}}
     $$
     So each level takes up the same volume. The code then auto-computes the percentages of each level to keep to be as close to this distribution as possible. If a given level has too few bins to match the percentage, it pushes the new bins on to the next level. 
+    - If `"sigmoid"` then will use a sigmoid distribution which is then normalized by the equivolume distribution. i.e. the un-normalized distribution takes the form:
 
+    $$
+    dist(L) = \frac{2}{1 + e^{2(L - \sqrt{\frac{1}{n}\sum_{\min}^{\max}n^2})}}\frac{1}{2^{3L}}
+    $$
 
   - bins: int or float
     - int: The total number of bins. This will not be the exact number of bins plotted, but will be the ballpark number which is aimed for while the program allocates bin sizes using `dist`.
