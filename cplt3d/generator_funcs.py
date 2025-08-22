@@ -261,15 +261,34 @@ def compute_dist(pts,vals,min_x,max_x,min_y,max_y,min_z,max_z,
 def compute_min_resolution(pts,vals,min_x,max_x,min_y,max_y,min_z,max_z,
              min_resolution = 0,max_resolution = 10,dist = None, bins = 0.1,focus = 'slope',
              **kwargs):
-    if max_resolution is None:
-        return 3
-    else:
-        return min(3,max_resolution)
+    print('finding largest size with one region having zero particles...')
+    finished = False
+    min_resolution = 0
+    while not finished:
+        min_resolution += 1
+        N = 2**min_resolution
+        X,Y,Z,dX,dY,dZ,res = uniform_generator(_histogram)(pts,vals,min_x,max_x,min_y,max_y,min_z,max_z,bins=N,**kwargs)
+        finished = (0 in res)
+        if not finished:
+            print(f'min_resolution={min_resolution} doesn\'t do it, continuing')
+    print(f'found minimal gets-zero min_resolution={min_resolution}')
+    print(f'adding one to make sure we capture everything... Now is {min_resolution+1}')
+    min_resolution += 1
+    if not max_resolution is None:
+        assert min_resolution < max_resolution,'Your max resolution is smaller than the generated minimum resolution, your data are too uniform!'
+    return min_resolution
 
 def compute_max_resolution(pts,vals,min_x,max_x,min_y,max_y,min_z,max_z,
              min_resolution = 0,max_resolution = 10,dist = None, bins = 0.1,focus = 'slope',
              **kwargs):
-    return 5
+    number_of_particles = len(pts) # or number of max bins so if perfectly uniform get 1 particle per bin
+    max_resolution = np.log2(number_of_particles)/3
+    max_resolution = int(bins)
+    print(f'found max_resolution={max_resolution}')
+    if max_resolution <= min_resolution:
+        print(f'this is the same as the min_resolution... setting to 1 more than min_resolution')
+        max_resolution = min_resolution+1
+    return max_resolution
 
 def tree_generator(interpolator):
     '''A decorator of interpolation functions to use a tree-based distribution of bins
@@ -316,6 +335,8 @@ def tree_generator(interpolator):
             bins = int(bins * 2**(3 * max_resolution)/dist[-1])
             print(f"found {bins} total voxels")
 
+        assert len(dist) == (max_resolution - min_resolution),f'Distribution is too long, len(dist) should = max_resolution-min_resolution. Instead, len(dist) = {len(dist)} != {max_resolution - min_resolution} (max_resolution={max_resolution},min_resolution={min_resolution})'
+
         bound = []
         N_remains = bins
         extra_bins = 0
@@ -329,7 +350,7 @@ def tree_generator(interpolator):
             # but of course we can't go above the level_num
             print(f'at level {level} we ideally keep {num_ideal} > {N_remains * percent}')
             num_actual = min(num_ideal,level_num)
-            print(f'so of {level_num} actually keep {num_actual}, or {num_actual/level_num*100}%')
+            print(f'-> so of {level_num} actually keep {num_actual}, or {num_actual/level_num*100}%')
             # then bound represents the percent that we keep
             bound.append(num_actual/level_num)
             extra_bins = (num_ideal - num_actual)
