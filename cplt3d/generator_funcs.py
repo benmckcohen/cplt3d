@@ -250,6 +250,27 @@ def _convolve_up(X,Y,Z,dX,dY,dZ,results,convolving_function,bound,depth,min_dept
     return voxels + [conv[highest_level][-1]]
     
 
+def compute_dist(pts,vals,min_x,max_x,min_y,max_y,min_z,max_z,
+             min_resolution = 0,max_resolution = 10,dist = None, bins = 0.1,focus = 'slope',
+             **kwargs):
+    dist = np.arange(min_resolution,max_resolution+1,1)
+    dist = 1*2**(3 * dist)
+    dist = dist/np.sum(dist)
+    return dist
+
+def compute_min_resolution(pts,vals,min_x,max_x,min_y,max_y,min_z,max_z,
+             min_resolution = 0,max_resolution = 10,dist = None, bins = 0.1,focus = 'slope',
+             **kwargs):
+    if max_resolution is None:
+        return 3
+    else:
+        return min(3,max_resolution)
+
+def compute_max_resolution(pts,vals,min_x,max_x,min_y,max_y,min_z,max_z,
+             min_resolution = 0,max_resolution = 10,dist = None, bins = 0.1,focus = 'slope',
+             **kwargs):
+    return 5
+
 def tree_generator(interpolator):
     '''A decorator of interpolation functions to use a tree-based distribution of bins
     interpolator: function that takes in (pts,vals,X,Y,Z,dX,dY,dZ) and returns results as the thing to be plotted for each bin
@@ -261,11 +282,26 @@ def tree_generator(interpolator):
         
         print(f"running from Resolution {min_resolution} to {max_resolution}")
         
-        
+        if min_resolution is None:
+            print('Found min_resolution is None, recomputing min_resolution...')
+            min_resolution = compute_min_resolution(pts,vals,min_x,max_x,min_y,max_y,min_z,max_z,
+                            min_resolution = min_resolution,max_resolution = max_resolution,dist = dist, bins = bins,focus = focus,
+                            **kwargs)
+            print(f'using min_resolution={min_resolution}')
+
+        if max_resolution is None:
+            print('Found max_resolution is None, recomputing max_resolution...')
+            max_resolution = compute_max_resolution(pts,vals,min_x,max_x,min_y,max_y,min_z,max_z,
+                            min_resolution = min_resolution,max_resolution = max_resolution,dist = dist, bins = bins,focus = focus,
+                            **kwargs)
+            print(f'using max_resolution={max_resolution}')
+
         if dist is None:
-            dist = np.arange(min_resolution,max_resolution+1,1)
-            dist = 1*2**(3 * dist)
-            dist = dist/np.sum(dist)
+            print('Found dist is None, recomputing min_resolution...')
+            dist = compute_dist(pts,vals,min_x,max_x,min_y,max_y,min_z,max_z,
+             min_resolution = min_resolution,max_resolution = max_resolution,dist = dist, bins = bins,focus = focus,
+             **kwargs)
+            print(f'using dist={dist}')
 
         if type(bins) == int:
             print("set bins using integer, implying total bin number")
@@ -273,7 +309,7 @@ def tree_generator(interpolator):
             print(f"    - l={max_resolution}")
             print(f"    - highest resolution n={2**(max_resolution)}")
         if type(bins) == float:
-            print(f"set bins using integer, implying total fraction of volume occupied by smallest bin size")
+            print(f"set bins using float, implying total fraction of volume occupied by smallest bin size")
             print(f"    - l={max_resolution}")
             print(f"    - highest resolution n={2**(max_resolution)}")
             assert 0<bins and bins < 1, 'set bins using integer, needs to be fraction of volume occupied by smallest bin size so between 0 and 1'
@@ -389,13 +425,116 @@ def _histogram(pts,vals,X,Y,Z,dX,dY,dZ,statistic = 'sum'):
 @plotting.volume_plot
 @uniform_generator
 def uniform_histogram(pts,vals,X,Y,Z,dX,dY,dZ,statistic = 'sum'):
-    ''''''
+    '''A Method for Plotting a 3D Histogram
+    Parameters
+        ----------
+        ax : Axis
+            The axis on which to plot the points
+        pts : array of shape (N,3)
+            The points to plot
+        vals: array of shape (N,)
+            The values to plot that are associated with each point
+        cmap: Colormap
+            The colormap to use while plotting, strongly recommended to have a gradient in alpha.
+        norm: Function
+            The normalization function to use. Colors are computed using cmap(NORM(x)) where NORM is the instantiation of norm with the correct vmax and vmin.
+        vmin: float
+            The minimum of the dynamic range. Set automatically if None.
+        vmax: float
+            The maximum of the dynamic range. Set automatically if None.
+        _range: array of shape (3,2)
+            The minima and maxima to generate bins within. Set automatically if None
+        filled: float or function
+            The method of making boxes invisible. If float the code removes the bottom(top) % of the bins. If function, must be of form f(x,y,z,dx,dy,dz,result,color), be vectorized, and return a np array of bools which are True if the box is plotted and False if not.
+        filled_invert: bool
+            If true, it inverts filled (so removes the top % of the data instead of bottom %). Has no impact if filled is a function.
+        edgecolor_func: Function
+            A function that takes in the facecolors and returns the edgecolors array. Can be useful if you want to shade your edge colors differently from your face colors (or change alpha)
+        bins: int or list of ints of shape (3,)
+            The number of bins to use. If a list, sets [X bins, Y bins, Z bins]. If an int, generates that number on each axis. 
+        statistic: string
+            The way to combine vals to generate the histogram. Input to scipy `binned_statistic_dd`. 
+            Note that cplt histograms generate densities, so whatever for statistic is computed, the number plotted is statistic/volume_of_bin
+        **kwargs:
+            Other arguments for voxelize (and the polygon collection). facecolor and edgecolor are overriden.
+
+        Returns
+        -------
+        Function
+            The instantiation of the normalization function used.
+        Poly3dCollection
+            The polygons that are plotted.
+        Array
+            The x values of the bins.
+        Array
+            The y values of the bins.
+        Array
+            The z values of the bins.
+        Array
+            The dx widths of the bins.
+        Array
+            The dy widths of the bins.
+        Array
+            The dz widths of the bins.
+        Array
+            Values of the bins.
+    '''
     return _histogram(pts,vals,X,Y,Z,dX,dY,dZ,statistic = statistic)
 
 @plotting.volume_plot
 @uniform_generator
 def uniform_nearest_interpolator(pts,vals,X,Y,Z,dX,dY,dZ):
-    ''''''
+    '''A Method for Plotting a 3d Function in the cubic style. Interpolates to the centers of each cube using nearest neighbor interpolation.
+    Parameters
+        ----------
+        ax : Axis
+            The axis on which to plot the points
+        pts : array of shape (N,3)
+            The points to plot
+        vals: array of shape (N,)
+            The values to plot that are associated with each point
+        cmap: Colormap
+            The colormap to use while plotting, strongly recommended to have a gradient in alpha.
+        norm: Function
+            The normalization function to use. Colors are computed using cmap(NORM(x)) where NORM is the instantiation of norm with the correct vmax and vmin.
+        vmin: float
+            The minimum of the dynamic range. Set automatically if None.
+        vmax: float
+            The maximum of the dynamic range. Set automatically if None.
+        _range: array of shape (3,2)
+            The minima and maxima to generate bins within. Set automatically if None
+        filled: float or function
+            The method of making boxes invisible. If float the code removes the bottom(top) % of the bins. If function, must be of form f(x,y,z,dx,dy,dz,result,color), be vectorized, and return a np array of bools which are True if the box is plotted and False if not.
+        filled_invert: bool
+            If true, it inverts filled (so removes the top % of the data instead of bottom %). Has no impact if filled is a function.
+        edgecolor_func: Function
+            A function that takes in the facecolors and returns the edgecolors array. Can be useful if you want to shade your edge colors differently from your face colors (or change alpha)
+        bins: int or list of ints of shape (3,)
+            The number of bins to use. If a list, sets [X bins, Y bins, Z bins]. If an int, generates that number on each axis. 
+        **kwargs:
+            Other arguments for voxelize (and the polygon collection). facecolor and edgecolor are overriden.
+
+        Returns
+        -------
+        Function
+            The instantiation of the normalization function used.
+        Poly3dCollection
+            The polygons that are plotted.
+        Array
+            The x values of the bins.
+        Array
+            The y values of the bins.
+        Array
+            The z values of the bins.
+        Array
+            The dx widths of the bins.
+        Array
+            The dy widths of the bins.
+        Array
+            The dz widths of the bins.
+        Array
+            Values of the bins.
+    '''
     Xc,Yc,Zc = X+dX/2,Y+dY/2,Z+dZ/2
     to_plot = np.array([Xc.flatten(),Yc.flatten(),Zc.flatten()]).T
     
@@ -416,7 +555,57 @@ def uniform_nearest_interpolator(pts,vals,X,Y,Z,dX,dY,dZ):
 @plotting.volume_plot
 @uniform_generator
 def uniform_linear_interpolator(pts,vals,X,Y,Z,dX,dY,dZ):
-    ''''''
+    '''a 3d Function in the cubic style. Interpolates to the centers of each cube using linear interpolation. Note that this is much slower than nearest neighbor interpolation...
+    Parameters
+        ----------
+        ax : Axis
+            The axis on which to plot the points
+        pts : array of shape (N,3)
+            The points to plot
+        vals: array of shape (N,)
+            The values to plot that are associated with each point
+        cmap: Colormap
+            The colormap to use while plotting, strongly recommended to have a gradient in alpha.
+        norm: Function
+            The normalization function to use. Colors are computed using cmap(NORM(x)) where NORM is the instantiation of norm with the correct vmax and vmin.
+        vmin: float
+            The minimum of the dynamic range. Set automatically if None.
+        vmax: float
+            The maximum of the dynamic range. Set automatically if None.
+        _range: array of shape (3,2)
+            The minima and maxima to generate bins within. Set automatically if None
+        filled: float or function
+            The method of making boxes invisible. If float the code removes the bottom(top) % of the bins. If function, must be of form f(x,y,z,dx,dy,dz,result,color), be vectorized, and return a np array of bools which are True if the box is plotted and False if not.
+        filled_invert: bool
+            If true, it inverts filled (so removes the top % of the data instead of bottom %). Has no impact if filled is a function.
+        edgecolor_func: Function
+            A function that takes in the facecolors and returns the edgecolors array. Can be useful if you want to shade your edge colors differently from your face colors (or change alpha)
+        bins: int or list of ints of shape (3,)
+            The number of bins to use. If a list, sets [X bins, Y bins, Z bins]. If an int, generates that number on each axis. 
+        **kwargs:
+            Other arguments for voxelize (and the polygon collection). facecolor and edgecolor are overriden.
+
+        Returns
+        -------
+        Function
+            The instantiation of the normalization function used.
+        Poly3dCollection
+            The polygons that are plotted.
+        Array
+            The x values of the bins.
+        Array
+            The y values of the bins.
+        Array
+            The z values of the bins.
+        Array
+            The dx widths of the bins.
+        Array
+            The dy widths of the bins.
+        Array
+            The dz widths of the bins.
+        Array
+            Values of the bins.
+    '''
     Xc,Yc,Zc = X+dX/2,Y+dY/2,Z+dZ/2
     to_plot = np.array([Xc.flatten(),Yc.flatten(),Zc.flatten()]).T
     
@@ -437,6 +626,65 @@ def uniform_linear_interpolator(pts,vals,X,Y,Z,dX,dY,dZ):
 @plotting.volume_plot
 @tree_generator
 def tree_histogram(pts,vals,X,Y,Z,dX,dY,dZ,statistic = 'sum'):
+    '''Plots a histogram and assigns bin sizes using a tree method. Effectively, this attempts to place smaller bins in regions of the space that require a higher resolution. This attempts to plot fewer overall voxels on the matplotlib plot which is faster. Note that this is an **experimental** feature.
+    Parameters
+        ----------
+        ax : Axis
+            The axis on which to plot the points
+        pts : array of shape (N,3)
+            The points to plot
+        vals: array of shape (N,)
+            The values to plot that are associated with each point
+        cmap: Colormap
+            The colormap to use while plotting, strongly recommended to have a gradient in alpha.
+        norm: Function
+            The normalization function to use. Colors are computed using cmap(NORM(x)) where NORM is the instantiation of norm with the correct vmax and vmin.
+        vmin: float
+            The minimum of the dynamic range. Set automatically if None.
+        vmax: float
+            The maximum of the dynamic range. Set automatically if None.
+        _range: array of shape (3,2)
+            The minima and maxima to generate bins within. Set automatically if None
+        filled: float or function
+            The method of making boxes invisible. If float the code removes the bottom(top) % of the bins. If function, must be of form f(x,y,z,dx,dy,dz,result,color), be vectorized, and return a np array of bools which are True if the box is plotted and False if not.
+        filled_invert: bool
+            If true, it inverts filled (so removes the top % of the data instead of bottom %). Has no impact if filled is a function.
+        edgecolor_func: Function
+            A function that takes in the facecolors and returns the edgecolors array. Can be useful if you want to shade your edge colors differently from your face colors (or change alpha)
+        min_resolution: int
+            The minimum resolution to use. Note this is log2(bins) at minimal bin size
+        max_resolution: int
+            The maximum resolution to use. Note that this is log2(bins) at maximal bin size
+        dist: list of floats
+            The distribution of the number of each bin size. Must sum to 1. For example [0.5,0.5] would cause the code to make as close to half the bins as possible level 1 bins and half the bins level 2 bins. If `None` then will automatically generate the distribution.
+        bins: float
+            The percentage of volume taken up by the smallest bin size. Should be very small, especially for small bins, to prevent rendering issues. 
+        focus: string
+            How the code determines where to make smaller bins. The current two foci are 'slope' which extracts a percent with the largest slopes and 'magnitude' which extracts a percent with the largest magnitude.
+        **kwargs:
+            Other arguments for voxelize (and the polygon collection). facecolor and edgecolor are overriden.
+
+        Returns
+        -------
+        Function
+            The instantiation of the normalization function used.
+        Poly3dCollection
+            The polygons that are plotted.
+        Array
+            The x values of the bins.
+        Array
+            The y values of the bins.
+        Array
+            The z values of the bins.
+        Array
+            The dx widths of the bins.
+        Array
+            The dy widths of the bins.
+        Array
+            The dz widths of the bins.
+        Array
+            Values of the bins.
+    '''
     return _histogram(pts,vals,X,Y,Z,dX,dY,dZ,statistic = statistic)/(dX*dY*dZ)
 
 def parallel_animate(fig,func,frames,result_name,
@@ -525,7 +773,7 @@ def parallel_animate(fig,func,frames,result_name,
     def save_on_array(i):
         f = frames_todo[i]
         if interactive:
-            print(' ', end='', flush=True)
+            print(' ', end='', flush=True) #issue with this turning off when verbose == False. Also need to fix the tqdm turning on upon verbose == False
         for i in tqdm.tqdm(f,desc = f'Animation {i}',total = len(frames_todo[i]),leave=True,position=i):
             func(i)
 
@@ -555,6 +803,9 @@ def parallel_animate(fig,func,frames,result_name,
     
 
         frames_png = []
+        
+        
+
         for line in tqdm.tqdm(lines,desc = "Loading Frames"):
             image = imageio.v2.imread(line)
             frames_png.append(image)
