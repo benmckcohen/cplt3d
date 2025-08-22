@@ -281,12 +281,13 @@ def compute_min_resolution(pts,vals,min_x,max_x,min_y,max_y,min_z,max_z,
 def compute_max_resolution(pts,vals,min_x,max_x,min_y,max_y,min_z,max_z,
              min_resolution = 0,max_resolution = 10,dist = None, bins = 0.1,focus = 'slope',
              **kwargs):
-    number_of_particles = len(pts) # or number of max bins so if perfectly uniform get 1 particle per bin
+    print('found max_resolution is None, recomputing...')
+    number_of_particles = len(vals) # or number of max bins so if perfectly uniform get 1 particle per bin
     max_resolution = np.log2(number_of_particles)/3
-    max_resolution = int(bins)
+    max_resolution = int(max_resolution) + 1
     print(f'found max_resolution={max_resolution}')
     if max_resolution <= min_resolution:
-        print(f'this is the same as the min_resolution... setting to 1 more than min_resolution')
+        print(f'this is the same as or less than the min_resolution... setting to 1 more than min_resolution')
         max_resolution = min_resolution+1
     return max_resolution
 
@@ -335,7 +336,7 @@ def tree_generator(interpolator):
             bins = int(bins * 2**(3 * max_resolution)/dist[-1])
             print(f"found {bins} total voxels")
 
-        assert len(dist) == (max_resolution - min_resolution),f'Distribution is too long, len(dist) should = max_resolution-min_resolution. Instead, len(dist) = {len(dist)} != {max_resolution - min_resolution} (max_resolution={max_resolution},min_resolution={min_resolution})'
+        assert len(dist) == (max_resolution - min_resolution) + 1,f'Distribution is too long, len(dist) should = max_resolution-min_resolution + 1. Instead, len(dist) = {len(dist)} != {max_resolution - min_resolution + 1} (max_resolution={max_resolution},min_resolution={min_resolution})'
 
         bound = []
         N_remains = bins
@@ -356,10 +357,12 @@ def tree_generator(interpolator):
             extra_bins = (num_ideal - num_actual)
             N_remains = N_remains - num_actual
 
-        # bound = list(bins * np.array(dist)/2**(3*np.arange(min_resolution,max_resolution,1)))
-        for i in range(min_resolution):
-            bound[i] = '-'
         
+        # for i in range(min_resolution):
+        #     bound[i] = '-'
+        
+        bound = ['-'] * min_resolution + bound
+
         bound = [focus,bound]
 
         print(f'convolving specifications:')
@@ -469,7 +472,7 @@ def uniform_histogram(pts,vals,X,Y,Z,dX,dY,dZ,statistic = 'sum'):
             The method of making boxes invisible. If float the code removes the bottom(top) % of the bins. If function, must be of form f(x,y,z,dx,dy,dz,result,color), be vectorized, and return a np array of bools which are True if the box is plotted and False if not.
         filled_invert: bool
             If true, it inverts filled (so removes the top % of the data instead of bottom %). Has no impact if filled is a function.
-        edgecolor_func: Function
+        edgecolor_function: Function
             A function that takes in the facecolors and returns the edgecolors array. Can be useful if you want to shade your edge colors differently from your face colors (or change alpha)
         bins: int or list of ints of shape (3,)
             The number of bins to use. If a list, sets [X bins, Y bins, Z bins]. If an int, generates that number on each axis. 
@@ -528,7 +531,7 @@ def uniform_nearest_interpolator(pts,vals,X,Y,Z,dX,dY,dZ):
             The method of making boxes invisible. If float the code removes the bottom(top) % of the bins. If function, must be of form f(x,y,z,dx,dy,dz,result,color), be vectorized, and return a np array of bools which are True if the box is plotted and False if not.
         filled_invert: bool
             If true, it inverts filled (so removes the top % of the data instead of bottom %). Has no impact if filled is a function.
-        edgecolor_func: Function
+        edgecolor_function: Function
             A function that takes in the facecolors and returns the edgecolors array. Can be useful if you want to shade your edge colors differently from your face colors (or change alpha)
         bins: int or list of ints of shape (3,)
             The number of bins to use. If a list, sets [X bins, Y bins, Z bins]. If an int, generates that number on each axis. 
@@ -599,7 +602,7 @@ def uniform_linear_interpolator(pts,vals,X,Y,Z,dX,dY,dZ):
             The method of making boxes invisible. If float the code removes the bottom(top) % of the bins. If function, must be of form f(x,y,z,dx,dy,dz,result,color), be vectorized, and return a np array of bools which are True if the box is plotted and False if not.
         filled_invert: bool
             If true, it inverts filled (so removes the top % of the data instead of bottom %). Has no impact if filled is a function.
-        edgecolor_func: Function
+        edgecolor_function: Function
             A function that takes in the facecolors and returns the edgecolors array. Can be useful if you want to shade your edge colors differently from your face colors (or change alpha)
         bins: int or list of ints of shape (3,)
             The number of bins to use. If a list, sets [X bins, Y bins, Z bins]. If an int, generates that number on each axis. 
@@ -670,7 +673,7 @@ def tree_histogram(pts,vals,X,Y,Z,dX,dY,dZ,statistic = 'sum'):
             The method of making boxes invisible. If float the code removes the bottom(top) % of the bins. If function, must be of form f(x,y,z,dx,dy,dz,result,color), be vectorized, and return a np array of bools which are True if the box is plotted and False if not.
         filled_invert: bool
             If true, it inverts filled (so removes the top % of the data instead of bottom %). Has no impact if filled is a function.
-        edgecolor_func: Function
+        edgecolor_function: Function
             A function that takes in the facecolors and returns the edgecolors array. Can be useful if you want to shade your edge colors differently from your face colors (or change alpha)
         min_resolution: int
             The minimum resolution to use. Note this is log2(bins) at minimal bin size
