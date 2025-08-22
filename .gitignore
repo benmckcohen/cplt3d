@@ -206,6 +206,10 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
+# files
+# For gadget output
+Examples/Cosmological Simulation/gadget_utils.py
+
 # images and gifs
 Examples/Cosmological Simulation/Wireframe/
 Examples/Cosmological Simulation/Simulation/
@@ -216,6 +220,10 @@ Examples/Cosmological Simulation/rotating_density.gif
 # data tables
 *.fits
 *.hdf5
+*.parquet
 
 # build
 build/
+
+# DS_Store
+*.DS_Store

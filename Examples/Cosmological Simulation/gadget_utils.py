@@ -1,11 +1,12 @@
 import cplt3d.generator_funcs
+import pandas as pd
 import h5py
 import matplotlib.pyplot as plt
 import matplotlib.cm as colormaps
 import numpy as np
 import os
 import tqdm.notebook as tqdm
-import sklearn.neighbors as neighbors
+# import sklearn.neighbors as neighbors
 import time
 import matplotlib.style as mplstyle
 # import multiprocess
@@ -31,7 +32,7 @@ class GadgetSimulation:
         for f in l:
             if "snapshot" in f:
                 file_name = name + '/' + f
-                file_num = int(''.join([i for i in f if str.isdigit(i)][:-1]))
+                file_num = int(''.join([i for i in f if str.isnumeric(i)][:-1]))
                 file_names.append(file_name)
                 file_nums.append(file_num)
         file_names = [x for _,x in sorted(zip(file_nums, file_names))]
@@ -47,6 +48,7 @@ class GadgetSimulation:
         self.vels = None
         self.verbose = verbose
         self.particle_type = particle_type
+        # print(self.hdfs)
     def __iter__(self):
         return iter(self.hdfs)
     def __getitem__(self,i):
@@ -205,3 +207,9 @@ class GadgetSimulation:
             plt.colorbar(ax = ax,mappable = colormaps.ScalarMappable(norm=res[0], cmap=cmap),shrink=shrink,pad = pad)
         return res
     
+    def to_csv(self,i):
+        df = pd.DataFrame(columns = ['x','y','z'])
+        df['x'] = self.coords()[i][0]
+        df['y'] = self.coords()[i][1]
+        df['z'] = self.coords()[i][2]
+        df.to_parquet('cosmological_simulation.parquet',index = False)
