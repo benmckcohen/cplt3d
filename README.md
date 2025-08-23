@@ -434,12 +434,13 @@ ax.set_xlim(-d,d)
 ax.set_ylim(-d,d)
 ax.set_zlim(-d,d)
 fig.tight_layout()
-fig.savefig('Images/6_Histogram-Tree Dual-Gaussian.png',dpi = 500)
+fig.savefig('Images/6_Histogram-Tree Dual-Gaussian.png',dpi = 300)
 ```
 Now animating this plot is as simple as passing it to `spin_3d_plot` as follows
 ```python
 if __name__ == '__main__':
     folder_in = './Images'
     spin_3d_plot(fig,[ax,ax2],'Images/7_Gaussian_Histogram',step=1,merge=True,delete=True,fps = 15,
-                parallel = True,verbose = True,Animation_Generation_Folder=folder_in,dpi = 500)
+                parallel = True,verbose = True,Animation_Generation_Folder=folder_in,dpi = 300)
 ```
+This produces the animation at the top. 
