@@ -2,7 +2,7 @@
 
 ![til](/Examples/Gaussian/Images/7_Gaussian_Histogram.gif)
 
-An example of the code's tree-mesh histogram generator applied to a sum of two 3d Gaussian distributions. Note how the code automatically increases the resolution in regions of higher density.
+`cplt3d` is a python package for creating nifty 3d plots in matplotlib. It was created for the purpose of creating 3d histograms, specifically with cosmological N-body simulations in mind. It is still a work in progress. 
 
 ## Installation
 
@@ -392,3 +392,54 @@ cplt3d comes equipped with two functions to make it easy to animate plots, espec
   **Returns**
           -------------------------------------
   - None
+
+**Example**
+We can easily rotate subplots using this function, as seen in this example. We first create a bimodal distribution by combining two Gaussian distributions. 
+```python
+# take some samples from a bimodal distribution
+N = 10000
+std = 0.3
+pos = 1
+pts_samples_bi_1 = np.random.multivariate_normal(mean = [pos,pos,pos],cov = [[std,0,0],[0,std,0],[0,0,std]],size = N)
+pts_samples_bi_2 = np.random.multivariate_normal(mean = [-pos,-pos,-pos],cov = [[std,0,0],[0,std,0],[0,0,std]],size = N)
+pts_samples_bi = list(pts_samples_bi_1) + list(pts_samples_bi_2)
+GAUSSIAN_samples_bi = np.ones(len(pts_samples_bi))
+```
+Then we can plot it as we have before
+```python
+fig = plt.figure(figsize = (6*2,6))
+ax = fig.add_subplot(121,projection = '3d')
+ax2 = fig.add_subplot(122,projection = '3d')
+
+cmap = colormaps.get_cmap('inferno')
+use_cmap = cmap(np.arange(cmap.N))
+use_cmap[:,-1] = np.linspace(0,1,cmap.N)**2
+use_cmap = colors.ListedColormap(use_cmap)
+d = 3
+
+poly = tree_histogram(ax,np.array(pts_samples_bi),np.array(GAUSSIAN_samples_bi),cmap = use_cmap,
+               filled=None,verbose = False,
+               _range = [[-d,d],[-d,d],[-d,d]],
+               min_resolution = 1,max_resolution = 5,
+               vmin = 1,norm = LogNorm,edgecolor_function = lambda x:(0,0,0,0.2),linewidths = 0.4)
+
+poly = tree_histogram(ax2,np.array(pts_samples_bi),np.array(GAUSSIAN_samples_bi),cmap = use_cmap,
+               filled=None,verbose = False,
+               _range = [[-d,d],[-d,d],[-d,d]],
+               min_resolution = 1,max_resolution = 5,
+               vmin = 1,norm = LogNorm)
+
+
+ax.set_xlim(-d,d)
+ax.set_ylim(-d,d)
+ax.set_zlim(-d,d)
+fig.tight_layout()
+fig.savefig('Images/6_Histogram-Tree Dual-Gaussian.png',dpi = 500)
+```
+Now animating this plot is as simple as passing it to `spin_3d_plot` as follows
+```python
+if __name__ == '__main__':
+    folder_in = './Images'
+    spin_3d_plot(fig,[ax,ax2],'Images/7_Gaussian_Histogram',step=1,merge=True,delete=True,fps = 15,
+                parallel = True,verbose = True,Animation_Generation_Folder=folder_in,dpi = 500)
+```
