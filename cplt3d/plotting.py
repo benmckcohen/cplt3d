@@ -6,6 +6,7 @@ import cplt3d.cube_plotter as cube_plotter
 import cplt3d.helper as helper
 from inspect import signature
 import cplt3d.edgecolor_funcs as edgecolor_funcs
+import functools
 
 def volume_plot(fetch_coordinates):
     '''General plotting decorator. Needs to encapsulate something that will transform the points and values into box coordinates and their values.
@@ -15,6 +16,7 @@ def volume_plot(fetch_coordinates):
         A function that takes in pts, vals and returns the coordinates (x,y,z) and extents (dx,dy,dz) of the boxes in addition to their result (results).
     
     '''
+    functools.wraps(fetch_coordinates)
     @helper.verbose_print    
     def wrap(ax,pts,vals,
             cmap = plt.get_cmap('viridis'),norm = colors.Normalize,vmin = None,vmax = None,

@@ -13,7 +13,7 @@ else:
 import os
 import cplt3d.helper as helper
 import multiprocess
-import matplotlib.animation 
+import functools
 import subprocess
 import sys
 import imageio
@@ -24,7 +24,7 @@ def uniform_generator(interpolator):
     '''A decorator of interpolation functions to use a uniform distribution of bins
     interpolator: function that takes in (pts,vals,X,Y,Z,dX,dY,dZ) and returns results as the thing to be plotted for each bin
     '''
-    
+    functools.wraps(interpolator)
     def wrap(pts,vals,min_x,max_x,min_y,max_y,min_z,max_z,bins=25,**kwargs):
         if type(bins) == int:
             N_x,N_y,N_z = bins,bins,bins
@@ -271,7 +271,7 @@ def compute_dist(pts,vals,min_x,max_x,min_y,max_y,min_z,max_z,
     
 
 def compute_min_resolution(pts,vals,min_x,max_x,min_y,max_y,min_z,max_z,
-             min_resolution = 0,max_resolution = 10,dist = None, bins = 0.1,focus = 'slope',
+             min_resolution = 0,max_resolution = 10,dist = None,focus = 'slope',
              **kwargs):
     print('finding largest size with one region having zero particles...')
     finished = False
@@ -291,7 +291,7 @@ def compute_min_resolution(pts,vals,min_x,max_x,min_y,max_y,min_z,max_z,
     return min_resolution
 
 def compute_max_resolution(pts,vals,min_x,max_x,min_y,max_y,min_z,max_z,
-             min_resolution = 0,max_resolution = 10,dist = None, bins = 0.1,focus = 'slope',
+             min_resolution = 0,max_resolution = 10,dist = None,focus = 'slope',
              **kwargs):
     print('finding average volume per particle...')
     number_of_particles = len(vals) # or number of max bins so if perfectly uniform get 1 particle per bin
@@ -326,11 +326,11 @@ def compute_bound_from_dist(dist,optimize,bins,max_resolution):
         # The percent that is left over. e.g. if level 1, then 8 bins. If percent was 2, then 0.16 ideal, 0 actual, and 0.16/8 = 0.02 (2%) to makeup
         percent_to_makeup = (number_making_volume_percent - number_keep)/level_num
         print(f'    -> so we need to makeup {percent_to_makeup * 100}% of the volume')
-        if total_boxes < bins:
-            print(f'    -> currently at {total_boxes} boxes < upper limit {bins}')
-        else:
-            print(f'    -> currently at {total_boxes} boxes >= upper limit {bins}, forcing this layer to be 100% bound')
-            to_bind = 1
+        # if total_boxes < bins:
+        print(f'    -> currently at {total_boxes} boxes')# < upper limit {bins}')
+        # else:
+        #     print(f'    -> currently at {total_boxes} boxes >= upper limit {bins}, forcing this layer to be 0% bound')
+        #     to_bind = 1
         # then bound represents the percent that we keep
         bound.append(to_bind)
     bound.reverse()
@@ -340,9 +340,9 @@ def tree_generator(interpolator):
     '''A decorator of interpolation functions to use a tree-based distribution of bins
     interpolator: function that takes in (pts,vals,X,Y,Z,dX,dY,dZ) and returns results as the thing to be plotted for each bin
     '''
-
+    functools.wraps(interpolator)
     def wrap(pts,vals,min_x,max_x,min_y,max_y,min_z,max_z,
-             min_resolution = None,max_resolution = None,dist = None, bins = 10000,focus = 'slope',
+             min_resolution = None,max_resolution = None,dist = None,focus = 'slope',
              **kwargs):
         
         print(f"running from Resolution {min_resolution} to {max_resolution}")
@@ -350,14 +350,14 @@ def tree_generator(interpolator):
         if min_resolution is None:
             print('Found min_resolution is None, recomputing min_resolution...')
             min_resolution = compute_min_resolution(pts,vals,min_x,max_x,min_y,max_y,min_z,max_z,
-                            min_resolution = min_resolution,max_resolution = max_resolution,dist = dist, bins = bins,focus = focus,
+                            min_resolution = min_resolution,max_resolution = max_resolution,dist = dist,focus = focus,
                             **kwargs)
             print(f'using min_resolution={min_resolution}')
 
         if max_resolution is None:
             print('Found max_resolution is None, recomputing max_resolution...')
             max_resolution = compute_max_resolution(pts,vals,min_x,max_x,min_y,max_y,min_z,max_z,
-                            min_resolution = min_resolution,max_resolution = max_resolution,dist = dist, bins = bins,focus = focus,
+                            min_resolution = min_resolution,max_resolution = max_resolution,dist = dist,focus = focus,
                             **kwargs)
             print(f'using max_resolution={max_resolution}')
         print('dist',dist,type(dist))
@@ -369,18 +369,18 @@ def tree_generator(interpolator):
         else:
             optimize = False
 
-        if type(bins) == int:
-            print("set bins using integer, implying (approximate) total bin number")
-            print(f'effective nside is {bins**(1/3)}')
-            print(f"    - l={max_resolution}")
-            print(f"    - highest resolution n={2**(max_resolution)}")
-        if type(bins) == float:
-            print(f"set bins using float, implying total fraction of volume occupied by smallest bin size")
-            print(f"    - l={max_resolution}")
-            print(f"    - highest resolution n={2**(max_resolution)}")
-            assert 0<bins and bins < 1, 'set bins using integer, needs to be fraction of volume occupied by smallest bin size so between 0 and 1'
-            bins = int(bins * 2**(3 * max_resolution)/dist[-1])
-            print(f"found {bins} total voxels")
+        # if type(bins) == int:
+        #     print("set bins using integer, implying (approximate) total bin number")
+        #     print(f'effective nside is {bins**(1/3)}')
+        #     print(f"    - l={max_resolution}")
+        #     print(f"    - highest resolution n={2**(max_resolution)}")
+        # if type(bins) == float:
+        #     print(f"set bins using float, implying total fraction of volume occupied by smallest bin size")
+        #     print(f"    - l={max_resolution}")
+        #     print(f"    - highest resolution n={2**(max_resolution)}")
+        #     assert 0<bins and bins < 1, 'set bins using integer, needs to be fraction of volume occupied by smallest bin size so between 0 and 1'
+        #     bins = int(bins * 2**(3 * max_resolution)/dist[-1])
+        #     print(f"found {bins} total voxels")
 
         assert len(dist) == (max_resolution - min_resolution) + 1,f'Distribution is too long, len(dist) should = max_resolution-min_resolution + 1. Instead, len(dist) = {len(dist)} != {max_resolution - min_resolution + 1} (max_resolution={max_resolution},min_resolution={min_resolution})'
 
@@ -411,7 +411,7 @@ def tree_generator(interpolator):
         bound = [focus,bound]
 
         print(f'convolving specifications:')
-        print(f'    - bin target: {bins}')
+        # print(f'    - bin target: {bins}')
         print(f'    - focus: {bound[0]}')
         print(f'    - distribution: {dist}')
         print(f'    - % to keep: {bound[1]}')
@@ -725,12 +725,19 @@ def tree_histogram(pts,vals,X,Y,Z,dX,dY,dZ,statistic = 'sum'):
         max_resolution: int
             The maximum resolution to use. Note that this is log2(bins) at maximal bin size
         dist: list of floats, String, or None
-            The distribution of the number of each bin size. Must sum to 1. For example [0.5,0.5] would cause the code to make as close to half the bins as possible level 1 bins and half the bins level 2 bins. If string will generate according to the method related to the string. Currently, there are two methods:
-                - "equivolume" or None: computes a distribution assuming equal volumes.
-                - "sigmoid": computes a distribution using a sigmoid distribution which is then adjusted by volume.
-        bins: int or float
-            int:  The total number of bins. This will not be the exact number of bins plotted, but will be the ballpark number which is aimed for while the program allocates bin sizes using `dist`.
-            float: The percentage of volume taken up by the smallest bin size. Should be very small, especially for small bins, to prevent rendering issues. 
+            The distribution of percentages of volumes for each. Must sum to 1 and have a length = max_resolution - min_resolution + 1. For example [0.5,0.5] would cause the code to make as close to half the bins as possible level min_resolution bins and half the bins level max_resolution bins. 
+            - If `"equivolume"` or `None` then will automatically generate the distribution as
+            $$
+            dist(L) = 1/N
+            $$
+            So each level takes up the same volume.
+            - If `"sigmoid"` then will use a sigmoid distribution which is then normalized by the equivolume distribution. i.e. the un-normalized distribution takes the form:
+
+            $$
+            dist(L) = \frac{2}{1 + e^{2.1(L - \sqrt{\frac{1}{n}\sum_{\min}^{\max}n^2})}}\left (\frac{1}{2^{3L}}\right )^1.25
+            $$
+
+            The code distributes bins according to these volumes percentages as closely as possible. When there is overflow, it adds the overflow percentage to the next bin size.
         focus: string
             How the code determines where to make smaller bins. The current two foci are 'slope' which extracts a percent with the largest slopes and 'magnitude' which extracts a percent with the largest magnitude.
         **kwargs:

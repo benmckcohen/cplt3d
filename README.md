@@ -259,20 +259,22 @@ This is an experimental histogram plotter that uses different bin sizes to "zoom
   - max_resolution: int or None
     - The maximum resolution to use. Note that this is log2(bins) at maximal **bin** size. If `None`, will compute the resolution such that the bin size is as close to the average volume per particle (or min_resolution + 1 if min_resolution < that).
   - dist: list of floats or None
-    - The distribution of the number of each bin size. Must sum to 1 and have a length = max_resolution - min_resolution + 1. For example [0.5,0.5] would cause the code to make as close to half the bins as possible level min_resolution bins and half the bins level max_resolution bins. 
+    - The distribution of percentages of volumes for each. Must sum to 1 and have a length = max_resolution - min_resolution + 1. For example [0.5,0.5] would cause the code to make as close to half the bins as possible level min_resolution bins and half the bins level max_resolution bins. 
     - If `"equivolume"` or `None` then will automatically generate the distribution as
     $$
-    dist(L) = \frac{2^{3L}}{\sum_{n = \min + 1}^{\max} 2^{3n}}
+    dist(L) = 1/N
     $$
-    So each level takes up the same volume. The code then auto-computes the percentages of each level to keep to be as close to this distribution as possible. If a given level has too few bins to match the percentage, it pushes the new bins on to the next level. 
+    So each level takes up the same volume.
     - If `"sigmoid"` then will use a sigmoid distribution which is then normalized by the equivolume distribution. i.e. the un-normalized distribution takes the form:
 
     $$
-    dist(L) = \frac{2}{1 + e^{2(L - \sqrt{\frac{1}{n}\sum_{\min}^{\max}n^2})}}\frac{1}{2^{3L}}
+    dist(L) = \frac{2}{1 + e^{2.1(L - \sqrt{\frac{1}{n}\sum_{\min}^{\max}n^2})}}\left (\frac{1}{2^{3L}}\right )^1.25
     $$
 
-  - bins: int or float
-    - int: The total number of bins. This will not be the exact number of bins plotted, but will be the ballpark number which is aimed for while the program allocates bin sizes using `dist`.
+    The code distributes bins according to these volumes percentages as closely as possible. When there is overflow, it adds the overflow percentage to the next bin size.  
+
+  <!-- - bins: int or float -->
+    <!-- - int: The total number of bins. This will not be the exact number of bins plotted, but will be the ballpark number which is aimed for while the program allocates bin sizes using `dist`. -->
     - float: The percentage of volume taken up by the smallest bin size. Should be very small, especially for small bins, to prevent rendering issues. 
   - focus: string
     - How the code determines where to make smaller bins. The current two foci are 'slope' which extracts a percent with the largest slopes and 'magnitude' which extracts a percent with the largest magnitude.
@@ -307,7 +309,7 @@ As an example, we can once again plot a histogram of the Gaussian samples. Using
 
 ```python
 poly = tree_histogram(ax,pts_samples,GAUSSIAN_samples,cmap = use_cmap,
-               filled=None,verbose = True,
+               filled=None,verbose = True,dist = 'sigmoid',
                min_resolution = None,max_resolution = None,edgecolor_function = lambda color:(0,0,0,0.01))
 ```
 which gives us
@@ -316,3 +318,77 @@ which gives us
 
 
 ### Animating 3d Plots
+
+cplt3d comes equipped with two functions to make it easy to animate plots, especially 3d plots. The first is a general animation framework. 
+
+#### `parallel_animate`
+
+`parallel_animate` animates functions in parallel. Note that during animation creation this method creates a temperary directory and saves the frames as individual images. It then combines those frames and removes the file. The `merge` keyword controls whether or not the method actually combines the images. The `delete` keyword controls whether the method deletes the temperary folder.
+  
+  **Parameters**
+          -------------------------------------
+  - fig : Figure
+      - The figure which contains the axes to animate.
+  - func : Function
+      - A function that takes in a frame from frames and performs any modifications necessary to the axes.
+  - frames : list
+      - A list of inputs to func.
+  - result_name: str
+      - The filename that the code saves the animation to.
+  - out: str
+      - The filetype of the animation. Default is `.gif`.
+  - fps: int
+      - The frames per second of the animation. 
+  - parallel: bool
+      - Whether or not to parallelize saving the frames of the animation.    
+  - Animation_Generation_Folder: str
+      - The folder to generate the animation frames without. If set to None will create folder with random integer name in the working directory.
+  - delete: bool
+      - Whether or not to delete the Animation_Generation_Folder and all of the frames within upon completion of the animation.
+  - merge: bool
+      - Whether or not to merge the frames into an actual animation. 
+  - kwargs:
+      - Arguments for the `savefig` operation on `fig`.
+
+  **Returns**
+        -------------------------------------
+  - None
+
+
+#### `spin_3d_plot`
+
+`spin_3d_plot` spins a 3d plot or a set of 3d plots in a circle. This allows easier visualization. The method can run in parallel and uses `parallel_animate` under the hood, so the discussion above applies for this method too. 
+
+  **Parameters**
+  ----------
+  - fig : Figure
+      - The figure which contains the axes to rotate
+  - axs : Axis or list
+      - The axis on which to plot the points. If given a list it will animate all of the axes in the list (useful for animating a multi-cell plot). Make sure that all the axes are in the 3d projection!
+  - result_name : str
+      - The name of the file to save the animation to
+  - times: float
+      - The number of times to rotate. i.e. the function will rotate the plot int(360 * times) degrees.
+  - step: int
+      - The step size of the animation. i.e. the function will rotate the plot in steps of `step` degrees
+  - parallel: bool
+      - Whether or not to parallelize saving the frames of the animation.
+  - axis: str (or 3d vector)
+      - The axis to rotate around. Currently, only 'x', 'y', and 'z' are implemented. TODO implement 3d vector to rotate about arbitrary axis. 
+  - fps: int
+      - The frames per second of the animation. 
+  - Animation_Generation_Folder: str
+      - The folder to generate the animation frames without. If set to None will create folder with random integer name in the working directory.
+  - delete: bool
+      - Whether or not to delete the Animation_Generation_Folder and all of the frames within upon completion of the animation
+  - merge: bool
+      - Whether or not to merge the frames into an actual animation. 
+  - kwargs:
+      - Arguments for the general parallel animation generation function.
+          - out: str
+              The filetype of the animation. Default is `.gif`
+          - kwargs
+              What to input into the `fig` `savefig` method when saving frames (e.g. dpi)
+  **Returns**
+          -------------------------------------
+  - None
