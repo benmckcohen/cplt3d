@@ -4,7 +4,7 @@
 
 `cplt3d` is a python package for creating nifty 3d plots in matplotlib. It was created for the purpose of creating 3d histograms, specifically with cosmological N-body simulations in mind. It is still a work in progress. 
 
-## Installation
+# Installation
 
 This package is in development and does not have a Python Package Index yet. To install the package, close the repository and pip install manually. For example, in the directory where you wish to store `cplt3d`, run:
 
@@ -14,15 +14,11 @@ pip install ./cplt3d
 rm -r cplt3d
 ```
 
-## Use
-
-### 3d Plotting
+# 3d Plotting
 
 `cplt3d` has four functions to allow 3d voxel plotting.
 
----
-
-#### `cplt3d.uniform_histogram`
+## `cplt3d.uniform_histogram`
 
 `cplt3d.uniform_histogram` allows users to plot 3d histograms of datasets at a given resolution. Note that the rendering of high resolution 3d histograms can be very computationally expensive. Therefore, it is highly recommended to set filled to at least $0.1-0.2$ for non-trivial bin sizes.
 
@@ -126,9 +122,7 @@ Which leads to the figure:
 
 ![til](/Examples/Gaussian/Images/3_Histogram-Uniform_Gaussian.png)
 
----
-
-#### `cplt3d.uniform_nearest_interpolator` and `cplt3d.uniform_nearest_interpolator`
+## `cplt3d.uniform_nearest_interpolator` and `cplt3d.uniform_nearest_interpolator`
 
 `cplt3d.uniform_nearest_interpolator` interpolates a function using nearest neighbor interpolation to the voxels. This is faster than linear interpolation, which can be done through `cplt3d.linear_nearest_interpolator`. Both have the same input and output structure.
 
@@ -242,9 +236,7 @@ This produces plots that look like
 
 ![til](/Examples/Gaussian/Images/1_Nearest-Uniform_Gaussian.png)
 
----
-
-#### `cplt3d.tree_histogram`
+## `cplt3d.tree_histogram`
 
 This is an experimental histogram plotter that uses different bin sizes to "zoom-in" on structure in the histogram. This allows very small bins to be plotted without massive cost in displaying the histogram when much of the structure is present in small regions of the plot. Note that this is an **experimental** feature and it is probably better to use `uniform_histogram` in most applications. Ways to improve computing `dist` automatically for the plots to look good in more situations are welcome!
 
@@ -339,15 +331,11 @@ which gives us
 
 ![til](/Examples/Gaussian/Images/4_Histogram-Tree_Gaussian_1.png) 
 
----
-
-### Animating 3d Plots
+# Animating 3d Plots
 
 cplt3d comes equipped with two functions to make it easy to animate plots, especially 3d plots. The first is a general animation framework. 
 
----
-
-#### `parallel_animate`
+## `parallel_animate`
 
 `parallel_animate` animates functions in parallel. Note that during animation creation this method creates a temperary directory and saves the frames as individual images. It then combines those frames and removes the file. The `merge` keyword controls whether or not the method actually combines the images. The `delete` keyword controls whether the method deletes the temperary folder.
 
@@ -384,9 +372,8 @@ cplt3d comes equipped with two functions to make it easy to animate plots, espec
         
   - None
 
----
 
-#### `spin_3d_plot`
+## `spin_3d_plot`
 
 `spin_3d_plot` spins a 3d plot or a set of 3d plots in a circle. This allows easier visualization. The method can run in parallel and uses `parallel_animate` under the hood, so the discussion above applies for this method too. 
 
