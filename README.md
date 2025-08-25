@@ -214,6 +214,7 @@ ax = fig.add_subplot(projection = '3d')
 ```
 
 ```python
+N_bins = 2**4
 # Actually plot
 uniform_nearest_interpolator(ax,pts,GAUSSIAN,bins = N_bins,filled = 0.3,cmap = use_cmap,verbose = True)
 # or
