@@ -304,9 +304,8 @@ def compute_max_resolution(pts,vals,min_x,max_x,min_y,max_y,min_z,max_z,
         max_resolution = min_resolution+1
     return max_resolution
 
-def compute_bound_from_dist(dist,optimize,bins,max_resolution):
+def compute_bound_from_dist(dist,optimize,max_resolution):
     bound = []
-    N_remains = bins
     total_boxes = 0
     percent_to_makeup = 0
     for i in range(0,len(dist)):
@@ -384,7 +383,7 @@ def tree_generator(interpolator):
 
         assert len(dist) == (max_resolution - min_resolution) + 1,f'Distribution is too long, len(dist) should = max_resolution-min_resolution + 1. Instead, len(dist) = {len(dist)} != {max_resolution - min_resolution + 1} (max_resolution={max_resolution},min_resolution={min_resolution})'
 
-        bound = compute_bound_from_dist(dist,optimize,bins,max_resolution)
+        bound = compute_bound_from_dist(dist,optimize,max_resolution)
         
         # for i in range(len(dist)):
         #     percent = dist[i]
