@@ -11,7 +11,7 @@ This package is in development and does not have a Python Package Index yet. To 
 ```
 git clone https://github.com/benmckcohen/cplt3d.git
 pip install ./cplt3d
-rm -r cplt3d
+rm -rf cplt3d
 ```
 
 # 3d Plotting
