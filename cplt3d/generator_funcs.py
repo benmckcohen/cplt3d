@@ -512,7 +512,7 @@ def uniform_histogram(pts,vals,X,Y,Z,dX,dY,dZ,statistic = 'sum'):
     vmax: float
         The maximum of the dynamic range. Set automatically if `None`.
     _range: array of shape (3,2)
-        The minima and maxima to generate bins within. Should be of the form [[min_x,max_x],[min_y,max_y],[min_z,max_z]]. Set automatically if `None`.
+        The minima and maxima to generate bins within. Should be of the form `[[min_x,max_x],[min_y,max_y],[min_z,max_z]]`. Set automatically if `None`.
     filled: float or function
         The method of making boxes invisible. If float the code removes the bottom(top) % of the bins. If function, must be of form f(x,y,z,dx,dy,dz,result,color), be vectorized, and return a np array of bools which are True if the box is plotted and False if not.
     filled_invert: bool
@@ -574,7 +574,7 @@ def uniform_nearest_interpolator(pts,vals,X,Y,Z,dX,dY,dZ):
     vmax: float
         The maximum of the dynamic range. Set automatically if `None`.
     _range: array of shape (3,2)
-        The minima and maxima to generate bins within. Should be of the form [[min_x,max_x],[min_y,max_y],[min_z,max_z]]. Set automatically if `None`.
+        The minima and maxima to generate bins within. Should be of the form `[[min_x,max_x],[min_y,max_y],[min_z,max_z]]`. Set automatically if `None`.
     filled: float or function
         The method of making boxes invisible. If float the code removes the bottom(top) % of the bins. If function, must be of form f(x,y,z,dx,dy,dz,result,color), be vectorized, and return a np array of bools which are True if the box is plotted and False if not.
     filled_invert: bool
@@ -648,7 +648,7 @@ def uniform_linear_interpolator(pts,vals,X,Y,Z,dX,dY,dZ):
     vmax: float
         The maximum of the dynamic range. Set automatically if `None`.
     _range: array of shape (3,2)
-        The minima and maxima to generate bins within. Should be of the form [[min_x,max_x],[min_y,max_y],[min_z,max_z]]. Set automatically if `None`.
+        The minima and maxima to generate bins within. Should be of the form `[[min_x,max_x],[min_y,max_y],[min_z,max_z]]`. Set automatically if `None`.
     filled: float or function
         The method of making boxes invisible. If float the code removes the bottom(top) % of the bins. If function, must be of form f(x,y,z,dx,dy,dz,result,color), be vectorized, and return a np array of bools which are True if the box is plotted and False if not.
     filled_invert: bool
@@ -724,7 +724,7 @@ def tree_histogram(pts,vals,X,Y,Z,dX,dY,dZ,statistic = 'sum'):
     vmax: float
         The maximum of the dynamic range. Set automatically if `None`.
     _range: array of shape (3,2)
-        The minima and maxima to generate bins within. Should be of the form [[min_x,max_x],[min_y,max_y],[min_z,max_z]]. Set automatically if `None`.
+        The minima and maxima to generate bins within. Should be of the form `[[min_x,max_x],[min_y,max_y],[min_z,max_z]]`. Set automatically if `None`.
     filled: float or function
         The method of making boxes invisible. If float the code removes the bottom(top) % of the bins. If function, must be of form f(x,y,z,dx,dy,dz,result,color), be vectorized, and return a np array of bools which are True if the box is plotted and False if not.
     filled_invert: bool
@@ -745,12 +745,12 @@ def tree_histogram(pts,vals,X,Y,Z,dX,dY,dZ,statistic = 'sum'):
         - If `"sigmoid"` then will use a sigmoid distribution which is then normalized by the equivolume distribution. i.e. the un-normalized distribution takes the form:
 
         $$
-        dist(L) = \frac{2}{1 + e^{2.1(L - \sqrt{\frac{1}{n}\sum_{\min}^{\max}n^2})}}\left (\frac{1}{2^{3L}}\right )^1.25
+        dist(L) = \frac{2}{1 + e^{2.1(L - \sqrt{\frac{1}{n}\sum_{\min}^{\max}n^2})}}\left (\frac{1}{2^{3L}}\right )^{1.25}
         $$
 
         The code distributes bins according to these volumes percentages as closely as possible. When there is overflow, it adds the overflow percentage to the next bin size.
     focus: string
-        How the code determines where to make smaller bins. The current two foci are 'slope' which extracts a percent with the largest slopes (calculated by comparing sub-bin values) and 'magnitude' which extracts a percent with the largest magnitude.
+        How the code determines where to make smaller bins. The current two foci are `slope` which extracts a percent with the largest slopes (calculated by comparing sub-bin values) and `magnitude` which extracts a percent with the largest magnitude.
     **kwargs:
         Other arguments for voxelize (and the polygon collection). facecolor and edgecolor are overriden.
 

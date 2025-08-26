@@ -54,8 +54,6 @@ if __name__ == '__main__':
                         filled=None,edgecolor_function = lambda x:(0,0,0,0.6))
     norm = res[0]
     poly = res[2]
-    # if not animate:
-    #     plt.colorbar(ax = ax2,mappable = colormaps.ScalarMappable(norm=norm, cmap=rainbow_cmap),shrink=0.7,pad = 0.05)
     
 
     # Set axis limits for the wireframe example
@@ -90,19 +88,6 @@ if __name__ == '__main__':
 
     # Set the maximum resolution
     max_resolution = 9
-
-    # adj = 6.75000007e-01#0.1
-    # adj_frac = np.array([0,0,0.1,0.5,2,3,2,1,-10])/10
-    # dist = np.array([5.21540646e-08,
-    #         4.17232517e-07,
-    #         3.33786013e-06,
-    #         2.67028811e-05,
-    #         2.13623048e-04,
-    #         1.70898439e-03,
-    #         1.36718751e-02,
-    #         1.09375001e-01,
-    #         8.75000007e-01])
-    # dist = list(np.array(dist) + adj * adj_frac)
     
     # Plot the full histogram
     res = tree_histogram(ax2,coords,vals,cmap = linear_cmap,verbose = True, #norm = LogNorm,
@@ -111,8 +96,6 @@ if __name__ == '__main__':
                                         filled=0.2,bins=50000)
     norm = res[0]
     poly = res[2]
-    # if not animate:
-    #     plt.colorbar(ax = ax2,mappable = colormaps.ScalarMappable(norm=norm, cmap=linear_cmap),shrink=0.7,pad = 0.05)
 
 
     # Update the axis limits and the projection

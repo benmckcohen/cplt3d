@@ -15,17 +15,17 @@ pip install ./cplt3d
 
 # 3d Plotting
 
-`cplt3d` has four functions to allow 3d voxel plotting.
+`cplt3d` has four functions to allow 3d voxel plotting, all under `cplt3d.generator_funcs`. These are `uniform_histogram`, `uniform_nearest_interpolator`, `uniform_nearest_interpolator`, and `tree_histogram`. Each allows the user to plot histograms or functions using voxels on a matplotlib 3d axis. 
 
-## `cplt3d.uniform_histogram`
+## `cplt3d.generator_funcs.uniform_histogram`
 
-`cplt3d.uniform_histogram` allows users to plot 3d histograms of datasets at a given resolution. Note that the rendering of high resolution 3d histograms can be very computationally expensive. Therefore, it is highly recommended to set filled to at least $0.1-0.2$ for non-trivial bin sizes.
+`cplt3d.uniform_histogram` allows users to plot 3d histograms of datasets at a given resolution. Note that the rendering of high resolution 3d histograms can be very computationally expensive. Therefore, it is highly recommended to set the `filled` parameter to at least $0.1-0.2$ for non-trivial bin sizes. This prevents `cplt3d` from rendering bins with alpha in the bottom $10-20\%$ which would not be visible anyways.
 
 ---
 
 **Parameters**
         
-  - - ax : Axis
+  - ax : Axis
       - The axis on which to plot the points.
   - pts : array of shape (N,3)
       - The points to plot.
@@ -40,7 +40,7 @@ pip install ./cplt3d
   - vmax: float
       - The maximum of the dynamic range. Set automatically if `None`.
   - _range: array of shape (3,2)
-      - The minima and maxima to generate bins within. Should be of the form [[min_x,max_x],[min_y,max_y],[min_z,max_z]]. Set automatically if `None`.
+      - The minima and maxima to generate bins within. Should be of the form `[[min_x,max_x],[min_y,max_y],[min_z,max_z]]`. Set automatically if `None`.
   - filled: float or function
       - The method of making boxes invisible. If float the code removes the bottom(top) % of the bins. If function, must be of form f(x,y,z,dx,dy,dz,result,color), be vectorized, and return a np array of bools which are True if the box is plotted and False if not.
   - filled_invert: bool
@@ -83,7 +83,7 @@ pip install ./cplt3d
         
 As an example, we can generate a histogram of a Gaussian distribution. First we can generate the distribution:
 ```python
-# take some samples from a unimodal distribution
+# Take some samples from a Gaussian
 N = 10000
 std = 0.3
 np.random.seed(123456)
@@ -101,6 +101,7 @@ cmap = colormaps.get_cmap('viridis')
 use_cmap = cmap(np.arange(cmap.N))
 use_cmap[:,-1] = np.linspace(0,1,cmap.N)**1.7
 use_cmap = colors.ListedColormap(use_cmap)
+
 # Prepare the axis
 fig = plt.figure(figsize = (3,3))
 ax = fig.add_subplot(projection = '3d')
@@ -111,7 +112,7 @@ N_bins = 2**5
 uniform_histogram(ax,pts_samples,GAUSSIAN_samples,bins = N_bins,filled = 0.3,cmap = use_cmap,verbose = False)
 ```
 ```python
-# Save the figure
+# Edit some figure settings and save it
 ax.set_xlabel("X")
 ax.set_ylabel("Y")
 ax.set_zlabel("Z")
@@ -144,7 +145,7 @@ Which leads to the figure:
   - vmax: float
       - The maximum of the dynamic range. Set automatically if `None`.
   - _range: array of shape (3,2)
-      - The minima and maxima to generate bins within. Should be of the form [[min_x,max_x],[min_y,max_y],[min_z,max_z]]. Set automatically if `None`.
+      - The minima and maxima to generate bins within. Should be of the form `[[min_x,max_x],[min_y,max_y],[min_z,max_z]]`. Set automatically if `None`.
   - filled: float or function
       - The method of making boxes invisible. If float the code removes the bottom(top) % of the bins. If function, must be of form f(x,y,z,dx,dy,dz,result,color), be vectorized, and return a np array of bools which are True if the box is plotted and False if not.
   - filled_invert: bool
@@ -187,6 +188,7 @@ Which leads to the figure:
 As an example, we can generate a plot of a Gaussian distribution. Like before, we first generate the function:
 
 ```python
+# generate the pdf of the Gaussian
 N = 32
 X,Y,Z = np.linspace(-4,4,N),np.linspace(-4,4,N),np.linspace(-4,4,N)
 X,Y,Z = np.meshgrid(X,Y,Z)
@@ -222,7 +224,7 @@ uniform_linear_interpolator(ax,pts,GAUSSIAN,bins = N_bins,filled = 0.3,cmap = us
 ```
 
 ```python
-# Save the plots
+# Edit some figure settings and save it
 ax.set_xlabel("X")
 ax.set_ylabel("Y")
 ax.set_zlabel("Z")
@@ -259,7 +261,7 @@ This is an experimental histogram plotter that uses different bin sizes to "zoom
   - vmax: float
       - The maximum of the dynamic range. Set automatically if `None`.
   - _range: array of shape (3,2)
-      - The minima and maxima to generate bins within. Should be of the form [[min_x,max_x],[min_y,max_y],[min_z,max_z]]. Set automatically if `None`.
+      - The minima and maxima to generate bins within. Should be of the form `[[min_x,max_x],[min_y,max_y],[min_z,max_z]]`. Set automatically if `None`.
   - filled: float or function
       - The method of making boxes invisible. If float the code removes the bottom(top) % of the bins. If function, must be of form f(x,y,z,dx,dy,dz,result,color), be vectorized, and return a np array of bools which are True if the box is plotted and False if not.
   - filled_invert: bool
@@ -280,12 +282,12 @@ This is an experimental histogram plotter that uses different bin sizes to "zoom
       - If `"sigmoid"` then will use a sigmoid distribution which is then normalized by the equivolume distribution. i.e. the un-normalized distribution takes the form:
 
       $$
-      dist(L) = \frac{2}{1 + e^{2.1(L - \sqrt{\frac{1}{n}\sum_{\min}^{\max}n^2})}}\left (\frac{1}{2^{3L}}\right )^1.25
+      dist(L) = \frac{2}{1 + e^{2.1(L - \sqrt{\frac{1}{n}\sum_{\min}^{\max}n^2})}}\left (\frac{1}{2^{3L}}\right )^{1.25}
       $$
 
       The code distributes bins according to these volumes percentages as closely as possible. When there is overflow, it adds the overflow percentage to the next bin size.
   - focus: string
-      - How the code determines where to make smaller bins. The current two foci are 'slope' which extracts a percent with the largest slopes (calculated by comparing sub-bin values) and 'magnitude' which extracts a percent with the largest magnitude.
+      - How the code determines where to make smaller bins. The current two foci are `slope` which extracts a percent with the largest slopes (calculated by comparing sub-bin values) and `magnitude` which extracts a percent with the largest magnitude.
   - kwargs:
       - Other arguments for voxelize (and the polygon collection). facecolor and edgecolor are overriden.
 
@@ -317,14 +319,14 @@ This is an experimental histogram plotter that uses different bin sizes to "zoom
 
 **Example**
         
-As an example, we can once again plot a histogram of the Gaussian samples. Using the same setup as for `uniform_histogram`, we can plot simply with
+As an example, we can once again plot a histogram of the Gaussian samples. Using the same setup as for `uniform_histogram`, we can plot simply with:
 
 ```python
 poly = tree_histogram(ax,pts_samples,GAUSSIAN_samples,cmap = use_cmap,
                filled=None,verbose = True,dist = 'sigmoid',
                min_resolution = None,max_resolution = None,edgecolor_function = lambda color:(0,0,0,0.01))
 ```
-which gives us
+which gives us:
 
 ![til](/Examples/Gaussian/Images/4_Histogram-Tree_Gaussian_1.png) 
 
@@ -355,10 +357,7 @@ cplt3d comes equipped with two functions to make it easy to animate plots, espec
   - parallel: bool
       - Whether or not to parallelize saving the frames of the animation.    
   - Animation_Generation_Folder: str
-      - The folder to generate the animation frames within. 
-      If set to `None` will create folder with random integer name in the working directory.
-      Note that this can error if you have already created such a directory, not deleted it, and have fixed the random seed.
-      In such a case, deleting the old directory or changing its name will solve the problem.
+      - The folder to generate the animation frames within. If set to `None` will create folder with random integer name in the working directory. Note that this can error if you have already created such a directory, not deleted it, and have fixed the random seed. In such a case, deleting the old directory or changing its name will solve the problem.
   - delete: bool
       - Whether or not to delete the `Animation_Generation_Folder` and all of the frames within upon completion of the animation.
   - merge: bool
@@ -375,7 +374,7 @@ cplt3d comes equipped with two functions to make it easy to animate plots, espec
 
 ## `spin_3d_plot`
 
-`spin_3d_plot` spins a 3d plot or a set of 3d plots in a circle. This allows easier visualization. The method can run in parallel and uses `parallel_animate` under the hood, so the discussion above applies for this method too. 
+`spin_3d_plot` spins a 3d plot or a set of 3d plots in a circle. This allows easier visualization. The method can run in parallel and uses `parallel_animate` under the hood, so the above discussion applies for this method too. 
 
 ---
 
@@ -384,9 +383,7 @@ cplt3d comes equipped with two functions to make it easy to animate plots, espec
   - fig : Figure
       - The figure which contains the axes to rotate
   - axs : Axis or list
-      - The axis on which to plot the points. 
-      If given a list it will animate all of the axes in the list (useful for animating a multi-cell plot). 
-      Make sure that all the axes are in the 3d projection!
+      - The axis on which to plot the points. If given a list it will animate all of the axes in the list (useful for animating a multi-cell plot). Make sure that all the axes are in the 3d projection!
   - result_name : str
       - The name of the file to save the animation to.
   - times: float
@@ -400,10 +397,7 @@ cplt3d comes equipped with two functions to make it easy to animate plots, espec
   - fps: int
       - The frames per second of the animation. 
   - Animation_Generation_Folder: str
-      - The folder to generate the animation frames within. 
-      If set to `None` will create folder with random integer name in the working directory.
-      Note that this can error if you have already created such a directory, not deleted it, and have fixed the random seed.
-      In such a case, deleting the old directory or changing its name will solve the problem.
+      - The folder to generate the animation frames within. If set to `None` will create folder with random integer name in the working directory. Note that this can error if you have already created such a directory, not deleted it, and have fixed the random seed. In such a case, deleting the old directory or changing its name will solve the problem.
   - delete: bool
       - Whether or not to delete the `Animation_Generation_Folder` and all of the frames within upon completion of the animation.
   - merge: bool
@@ -437,29 +431,33 @@ GAUSSIAN_samples_bi = np.ones(len(pts_samples_bi))
 ```
 Then we can plot it as we have before
 ```python
+# Prepare the figure
 fig = plt.figure(figsize = (6*2,6))
 ax = fig.add_subplot(121,projection = '3d')
 ax2 = fig.add_subplot(122,projection = '3d')
 
+# Prepare the colormap and region to plot
 cmap = colormaps.get_cmap('inferno')
 use_cmap = cmap(np.arange(cmap.N))
 use_cmap[:,-1] = np.linspace(0,1,cmap.N)**2
 use_cmap = colors.ListedColormap(use_cmap)
 d = 3
 
+# Plot with edges colored
 poly = tree_histogram(ax,np.array(pts_samples_bi),np.array(GAUSSIAN_samples_bi),cmap = use_cmap,
                filled=None,verbose = False,
                _range = [[-d,d],[-d,d],[-d,d]],
                min_resolution = 1,max_resolution = 5,
                vmin = 1,norm = LogNorm,edgecolor_function = lambda x:(0,0,0,0.2),linewidths = 0.4)
 
+# Plot without edges colored
 poly = tree_histogram(ax2,np.array(pts_samples_bi),np.array(GAUSSIAN_samples_bi),cmap = use_cmap,
                filled=None,verbose = False,
                _range = [[-d,d],[-d,d],[-d,d]],
                min_resolution = 1,max_resolution = 5,
                vmin = 1,norm = LogNorm)
 
-
+# Edit some figure settings and save it
 ax.set_xlim(-d,d)
 ax.set_ylim(-d,d)
 ax.set_zlim(-d,d)
