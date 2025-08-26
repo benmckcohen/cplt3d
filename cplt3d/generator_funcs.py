@@ -498,34 +498,34 @@ def uniform_histogram(pts,vals,X,Y,Z,dX,dY,dZ,statistic = 'sum'):
     Parameters
     ----------
     ax : Axis
-        The axis on which to plot the points
+        The axis on which to plot the points.
     pts : array of shape (N,3)
-        The points to plot
+        The points to plot.
     vals: array of shape (N,)
-        The values to plot that are associated with each point
+        The values to plot that are associated with each point. For histograms, use an array of ones.
     cmap: Colormap
         The colormap to use while plotting, strongly recommended to have a gradient in alpha.
     norm: Function
-        The normalization function to use. Colors are computed using cmap(NORM(x)) where NORM is the instantiation of norm with the correct vmax and vmin.
+        The normalization function to use. Colors are computed using cmap(NORM(x)) where NORM is the instantiation of `norm` with the correct `vmax` and `vmin`.
     vmin: float
-        The minimum of the dynamic range. Set automatically if None.
+        The minimum of the dynamic range. Set automatically if `None`.
     vmax: float
-        The maximum of the dynamic range. Set automatically if None.
+        The maximum of the dynamic range. Set automatically if `None`.
     _range: array of shape (3,2)
-        The minima and maxima to generate bins within. Set automatically if None
+        The minima and maxima to generate bins within. Should be of the form [[min_x,max_x],[min_y,max_y],[min_z,max_z]]. Set automatically if `None`.
     filled: float or function
         The method of making boxes invisible. If float the code removes the bottom(top) % of the bins. If function, must be of form f(x,y,z,dx,dy,dz,result,color), be vectorized, and return a np array of bools which are True if the box is plotted and False if not.
     filled_invert: bool
-        If true, it inverts filled (so removes the top % of the data instead of bottom %). Has no impact if filled is a function.
+        If true, it inverts filled (so removes the top % of the data instead of bottom %). Has no impact if `filled` is a function.
     edgecolor_function: Function
-        A function that takes in the facecolors and returns the edgecolors array. Can be useful if you want to shade your edge colors differently from your face colors (or change alpha)
+        A function that takes in the facecolors and returns the edgecolors array. Can be useful if you want to shade your edge colors differently from your face colors (or change alpha).
     bins: int or list of ints of shape (3,)
         The number of bins to use. If a list, sets [X bins, Y bins, Z bins]. If an int, generates that number on each axis. 
     statistic: string
         The way to combine vals to generate the histogram. Input to scipy `binned_statistic_dd`. 
-        Note that cplt histograms generate densities, so whatever for statistic is computed, the number plotted is statistic/volume_of_bin
+        Note that `cplt3d` histograms generate densities, so whatever for statistic is computed, the number plotted is statistic/volume_of_bin.
     **kwargs:
-        Other arguments for voxelize (and the polygon collection). facecolor and edgecolor are overriden.
+        Other arguments for voxelize (and the polygon collection). Note that `facecolor` and `edgecolor` are overriden.
 
     Returns
     -------
@@ -560,31 +560,31 @@ def uniform_nearest_interpolator(pts,vals,X,Y,Z,dX,dY,dZ):
     Parameters
     ----------
     ax : Axis
-        The axis on which to plot the points
+        The axis on which to plot the points.
     pts : array of shape (N,3)
-        The points to plot
+        The points to plot.
     vals: array of shape (N,)
-        The values to plot that are associated with each point
+        The values to plot that are associated with each point. For histograms, use an array of ones.
     cmap: Colormap
         The colormap to use while plotting, strongly recommended to have a gradient in alpha.
     norm: Function
-        The normalization function to use. Colors are computed using cmap(NORM(x)) where NORM is the instantiation of norm with the correct vmax and vmin.
+        The normalization function to use. Colors are computed using cmap(NORM(x)) where NORM is the instantiation of `norm` with the correct `vmax` and `vmin`.
     vmin: float
-        The minimum of the dynamic range. Set automatically if None.
+        The minimum of the dynamic range. Set automatically if `None`.
     vmax: float
-        The maximum of the dynamic range. Set automatically if None.
+        The maximum of the dynamic range. Set automatically if `None`.
     _range: array of shape (3,2)
-        The minima and maxima to generate bins within. Set automatically if None
+        The minima and maxima to generate bins within. Should be of the form [[min_x,max_x],[min_y,max_y],[min_z,max_z]]. Set automatically if `None`.
     filled: float or function
         The method of making boxes invisible. If float the code removes the bottom(top) % of the bins. If function, must be of form f(x,y,z,dx,dy,dz,result,color), be vectorized, and return a np array of bools which are True if the box is plotted and False if not.
     filled_invert: bool
-        If true, it inverts filled (so removes the top % of the data instead of bottom %). Has no impact if filled is a function.
+        If true, it inverts filled (so removes the top % of the data instead of bottom %). Has no impact if `filled` is a function.
     edgecolor_function: Function
-        A function that takes in the facecolors and returns the edgecolors array. Can be useful if you want to shade your edge colors differently from your face colors (or change alpha)
+        A function that takes in the facecolors and returns the edgecolors array. Can be useful if you want to shade your edge colors differently from your face colors (or change alpha).
     bins: int or list of ints of shape (3,)
         The number of bins to use. If a list, sets [X bins, Y bins, Z bins]. If an int, generates that number on each axis. 
     **kwargs:
-        Other arguments for voxelize (and the polygon collection). facecolor and edgecolor are overriden.
+        Other arguments for voxelize (and the polygon collection). Note that `facecolor` and `edgecolor` are overriden.
 
     Returns
     -------
@@ -634,31 +634,31 @@ def uniform_linear_interpolator(pts,vals,X,Y,Z,dX,dY,dZ):
     Parameters
     ----------
     ax : Axis
-        The axis on which to plot the points
+        The axis on which to plot the points.
     pts : array of shape (N,3)
-        The points to plot
+        The points to plot.
     vals: array of shape (N,)
-        The values to plot that are associated with each point
+        The values to plot that are associated with each point. For histograms, use an array of ones.
     cmap: Colormap
         The colormap to use while plotting, strongly recommended to have a gradient in alpha.
     norm: Function
-        The normalization function to use. Colors are computed using cmap(NORM(x)) where NORM is the instantiation of norm with the correct vmax and vmin.
+        The normalization function to use. Colors are computed using cmap(NORM(x)) where NORM is the instantiation of `norm` with the correct `vmax` and `vmin`.
     vmin: float
-        The minimum of the dynamic range. Set automatically if None.
+        The minimum of the dynamic range. Set automatically if `None`.
     vmax: float
-        The maximum of the dynamic range. Set automatically if None.
+        The maximum of the dynamic range. Set automatically if `None`.
     _range: array of shape (3,2)
-        The minima and maxima to generate bins within. Set automatically if None
+        The minima and maxima to generate bins within. Should be of the form [[min_x,max_x],[min_y,max_y],[min_z,max_z]]. Set automatically if `None`.
     filled: float or function
         The method of making boxes invisible. If float the code removes the bottom(top) % of the bins. If function, must be of form f(x,y,z,dx,dy,dz,result,color), be vectorized, and return a np array of bools which are True if the box is plotted and False if not.
     filled_invert: bool
-        If true, it inverts filled (so removes the top % of the data instead of bottom %). Has no impact if filled is a function.
+        If true, it inverts filled (so removes the top % of the data instead of bottom %). Has no impact if `filled` is a function.
     edgecolor_function: Function
-        A function that takes in the facecolors and returns the edgecolors array. Can be useful if you want to shade your edge colors differently from your face colors (or change alpha)
+        A function that takes in the facecolors and returns the edgecolors array. Can be useful if you want to shade your edge colors differently from your face colors (or change alpha).
     bins: int or list of ints of shape (3,)
         The number of bins to use. If a list, sets [X bins, Y bins, Z bins]. If an int, generates that number on each axis. 
     **kwargs:
-        Other arguments for voxelize (and the polygon collection). facecolor and edgecolor are overriden.
+        Other arguments for voxelize (and the polygon collection). Note that `facecolor` and `edgecolor` are overriden.
 
     Returns
     -------
@@ -703,38 +703,40 @@ def uniform_linear_interpolator(pts,vals,X,Y,Z,dX,dY,dZ):
 def tree_histogram(pts,vals,X,Y,Z,dX,dY,dZ,statistic = 'sum'):
     '''Plots a histogram and assigns bin sizes using a tree method. 
     
-    Effectively, this attempts to place smaller bins in regions of the space that require a higher resolution. This attempts to plot fewer overall voxels on the matplotlib plot which is faster. Note that this is an **experimental** feature.
+    Effectively, this attempts to place smaller bins in regions of the space that require a higher resolution. 
+    Thus, it tries to plot fewer overall voxels on the matplotlib plot which is faster. 
+    Note that this is an **experimental** feature.
 
     Parameters
     ----------
     ax : Axis
-        The axis on which to plot the points
+        The axis on which to plot the points.
     pts : array of shape (N,3)
-        The points to plot
+        The points to plot.
     vals: array of shape (N,)
-        The values to plot that are associated with each point
+        The values to plot that are associated with each point. For histograms, use an array of ones.
     cmap: Colormap
         The colormap to use while plotting, strongly recommended to have a gradient in alpha.
     norm: Function
-        The normalization function to use. Colors are computed using cmap(NORM(x)) where NORM is the instantiation of norm with the correct vmax and vmin.
+        The normalization function to use. Colors are computed using cmap(NORM(x)) where NORM is the instantiation of `norm` with the correct `vmax` and `vmin`.
     vmin: float
-        The minimum of the dynamic range. Set automatically if None.
+        The minimum of the dynamic range. Set automatically if `None`.
     vmax: float
-        The maximum of the dynamic range. Set automatically if None.
+        The maximum of the dynamic range. Set automatically if `None`.
     _range: array of shape (3,2)
-        The minima and maxima to generate bins within. Set automatically if None
+        The minima and maxima to generate bins within. Should be of the form [[min_x,max_x],[min_y,max_y],[min_z,max_z]]. Set automatically if `None`.
     filled: float or function
         The method of making boxes invisible. If float the code removes the bottom(top) % of the bins. If function, must be of form f(x,y,z,dx,dy,dz,result,color), be vectorized, and return a np array of bools which are True if the box is plotted and False if not.
     filled_invert: bool
-        If true, it inverts filled (so removes the top % of the data instead of bottom %). Has no impact if filled is a function.
+        If true, it inverts filled (so removes the top % of the data instead of bottom %). Has no impact if `filled` is a function.
     edgecolor_function: Function
-        A function that takes in the facecolors and returns the edgecolors array. Can be useful if you want to shade your edge colors differently from your face colors (or change alpha)
+        A function that takes in the facecolors and returns the edgecolors array. Can be useful if you want to shade your edge colors differently from your face colors (or change alpha).
     min_resolution: int
-        The minimum resolution to use. Note this is log2(bins) at minimal bin size
+        The minimum resolution to use. Note this is log2(bins) at minimal bin size. If `None`, will compute the min_resolution as one higher resolution step than the minimal resolution to have an empty bin (or `max_resolution` + 1 if `max_resolution` is specified and smaller).
     max_resolution: int
-        The maximum resolution to use. Note that this is log2(bins) at maximal bin size
+        The maximum resolution to use. Note that this is log2(bins) at maximal bin size. If `None`, will will compute the resolution such that the bin size is as close to the average volume per particle (or `min_resolution` + 1 if `min_resolution` < that).
     dist: list of floats, String, or None
-        The distribution of percentages of volumes for each. Must sum to 1 and have a length = max_resolution - min_resolution + 1. For example [0.5,0.5] would cause the code to make as close to half the bins as possible level min_resolution bins and half the bins level max_resolution bins. 
+        The distribution of percentages of volumes for each. Must sum to 1 and have a `length = max_resolution - min_resolution + 1`. For example [0.5,0.5] would cause the code to make as close to half the bins as possible level `min_resolution` bins and half the bins level `max_resolution` bins. 
         - If `"equivolume"` or `None` then will automatically generate the distribution as
         $$
         dist(L) = 1/N
@@ -748,7 +750,7 @@ def tree_histogram(pts,vals,X,Y,Z,dX,dY,dZ,statistic = 'sum'):
 
         The code distributes bins according to these volumes percentages as closely as possible. When there is overflow, it adds the overflow percentage to the next bin size.
     focus: string
-        How the code determines where to make smaller bins. The current two foci are 'slope' which extracts a percent with the largest slopes and 'magnitude' which extracts a percent with the largest magnitude.
+        How the code determines where to make smaller bins. The current two foci are 'slope' which extracts a percent with the largest slopes (calculated by comparing sub-bin values) and 'magnitude' which extracts a percent with the largest magnitude.
     **kwargs:
         Other arguments for voxelize (and the polygon collection). facecolor and edgecolor are overriden.
 
@@ -780,29 +782,35 @@ def parallel_animate(fig,func,frames,result_name,
                      delete = True,merge = True,**kwargs):
     '''A function that generates an animation based on an input function. 
     
-    Can be run in parallel for complex plots.
-        
+    Can be run in parallel for complex plots. 
+    Note that during animation creation this method creates a temperary directory and saves the frames as individual images. 
+    It then combines those frames and removes the file. 
+    The merge keyword controls whether or not the method actually combines the images. 
+    The delete keyword controls whether the method deletes the temperary folder.
         
     Parameters
     ----------
     fig : Figure
-        The figure which contains the axes to animate
+        The figure which contains the axes to animate.
     func : Function
         A function that takes in a frame from frames and performs any modifications necessary to the axes.
     frames : list
-        A list of inputs to func
+        A list of inputs to `func`.
     result_name: str
-        The filename that the code saves the animation to
+        The filename that the code saves the animation to.
     out: str
-        The filetype of the animation. Default is `.gif`
+        The filetype of the animation. Default is `.gif`.
     fps: int
         The frames per second of the animation. 
     parallel: bool
         Whether or not to parallelize saving the frames of the animation.    
     Animation_Generation_Folder: str
-        The folder to generate the animation frames without. If set to None will create folder with random integer name in the working directory.
+        The folder to generate the animation frames within. 
+        If set to `None` will create folder with random integer name in the working directory.
+        Note that this can error if you have already created such a directory, not deleted it, and have fixed the random seed.
+        In such a case, deleting the old directory or changing its name will solve the problem.
     delete: bool
-        Whether or not to delete the Animation_Generation_Folder and all of the frames within upon completion of the animation
+        Whether or not to delete the `Animation_Generation_Folder` and all of the frames within upon completion of the animation.
     merge: bool
         Whether or not to merge the frames into an actual animation. 
     **kwargs:
@@ -893,10 +901,7 @@ def parallel_animate(fig,func,frames,result_name,
         lines = [f'{Animation_Generation_Folder}/{line}' for line in lines]
         print(f"{len(lines)} frames found:")
     
-
         frames_png = []
-        
-        
 
         for line in tqdm.tqdm(lines,desc = "Loading Frames"):
             image = imageio.v2.imread(line)
@@ -917,40 +922,50 @@ def parallel_animate(fig,func,frames,result_name,
 def spin_3d_plot(fig,axs,result_name,times = 1,step = 1,parallel=True,
                  axis = 'z',fps = 50,Animation_Generation_Folder = None,
                  delete = True,merge = True,**kwargs):
-    '''A function that generates an animation rotating the input 3d plot. 
+    '''A function that generates an animation rotating the input 3d plot.
     
     Can run in parallel to speed up animation for complex plots.
+    The method can run in parallel and uses parallel_animate under the hood.
+    Note that during animation creation this method creates a temperary directory and saves the frames as individual images. 
+    It then combines those frames and removes the file. 
+    The merge keyword controls whether or not the method actually combines the images. 
+    The delete keyword controls whether the method deletes the temperary folder.
     
     Parameters
     ----------
     fig : Figure
         The figure which contains the axes to rotate
     axs : Axis or list
-        The axis on which to plot the points. If given a list it will animate all of the axes in the list (useful for animating a multi-cell plot). Make sure that all the axes are in the 3d projection!
+        The axis on which to plot the points. 
+        If given a list it will animate all of the axes in the list (useful for animating a multi-cell plot). 
+        Make sure that all the axes are in the 3d projection!
     result_name : str
-        The name of the file to save the animation to
+        The name of the file to save the animation to.
     times: float
         The number of times to rotate. i.e. the function will rotate the plot int(360 * times) degrees.
     step: int
-        The step size of the animation. i.e. the function will rotate the plot in steps of `step` degrees
+        The step size of the animation. i.e. the function will rotate the plot in steps of `step` degrees.
     parallel: bool
         Whether or not to parallelize saving the frames of the animation.
     axis: str (or 3d vector)
-        The axis to rotate around. Currently, only 'x', 'y', and 'z' are implemented. TODO implement 3d vector to rotate about arbitrary axis. 
+        The axis to rotate around. Currently, only 'x', 'y', and 'z' are implemented. It is recommended to use `z`.
     fps: int
         The frames per second of the animation. 
     Animation_Generation_Folder: str
-        The folder to generate the animation frames without. If set to None will create folder with random integer name in the working directory.
+        The folder to generate the animation frames within. 
+        If set to `None` will create folder with random integer name in the working directory.
+        Note that this can error if you have already created such a directory, not deleted it, and have fixed the random seed.
+        In such a case, deleting the old directory or changing its name will solve the problem.
     delete: bool
-        Whether or not to delete the Animation_Generation_Folder and all of the frames within upon completion of the animation
+        Whether or not to delete the `Animation_Generation_Folder` and all of the frames within upon completion of the animation.
     merge: bool
         Whether or not to merge the frames into an actual animation. 
     **kwargs:
-        Arguments for the general parallel animation generation function.
+        Arguments for the general parallel animation generation function. Contains both:
             out: str
-                The filetype of the animation. Default is `.gif`
+                The filetype of the animation. Default is `.gif`.
             **kwargs
-                What to input into the `fig` `savefig` method when saving frames (e.g. dpi)
+                What to input into the `fig` `savefig` method when saving frames (e.g. dpi).
     Returns
     -------
     None

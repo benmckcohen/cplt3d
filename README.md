@@ -25,56 +25,57 @@ pip install ./cplt3d
 
 **Parameters**
         
-- ax : Axis
-  - The axis on which to plot the points
-- pts : array of shape (N,3)
-  - The points to plot
-- vals: array of shape (N,)
-  - The values to plot that are associated with each point
-- cmap: Colormap
-  - The colormap to use while plotting, strongly recommended to have a gradient in alpha.
-- norm: Function
-  - The normalization function to use. Colors are computed using cmap(NORM(x)) where NORM is the instantiation of norm with the correct vmax and vmin.
-- vmin: float
-  - The minimum of the dynamic range. Set automatically if None.
-- vmax: float
-  - The maximum of the dynamic range. Set automatically if None.
-- _range: array of shape (3,2)
-  - The minima and maxima to generate bins within. Set automatically if None
-- filled: float or function
-  - The method of making boxes invisible. If float the code removes the bottom(top) % of the bins. If function, must be of form f(x,y,z,dx,dy,dz,result,color), be vectorized, and return a np array of bools which are True if the box is plotted and False if not
-- filled_invert: bool
-  - If true, it inverts filled (so removes the top % of the data instead of bottom %). Has no impact if filled is a function.
-- edgecolor_function: Function
-  - A function that takes in the facecolors and returns the edgecolors array. Can be useful if you want to shade your edge colors differently from your face colors (or change alpha)
-- bins: int or list of ints of shape (3,)
-  - The number of bins to use. If a list, sets [X bins, Y bins, Z bins]. If an int, generates that number on each axis. 
-- statistic: string
-  - The way to combine vals to generate the histogram. Input to scipy `binned_statistic_dd`. Note that cplt histograms generate densities, so whatever for statistic is computed, the number plotted is statistic/volume_of_bin.
-- kwargs:
-  - Other arguments for voxelize (and the polygon collection). facecolor and edgecolor are overriden.
+  - - ax : Axis
+      - The axis on which to plot the points.
+  - pts : array of shape (N,3)
+      - The points to plot.
+  - vals: array of shape (N,)
+      - The values to plot that are associated with each point. For histograms, use an array of ones.
+  - cmap: Colormap
+      - The colormap to use while plotting, strongly recommended to have a gradient in alpha.
+  - norm: Function
+      - The normalization function to use. Colors are computed using cmap(NORM(x)) where NORM is the instantiation of `norm` with the correct `vmax` and `vmin`.
+  - vmin: float
+      - The minimum of the dynamic range. Set automatically if `None`.
+  - vmax: float
+      - The maximum of the dynamic range. Set automatically if `None`.
+  - _range: array of shape (3,2)
+      - The minima and maxima to generate bins within. Should be of the form [[min_x,max_x],[min_y,max_y],[min_z,max_z]]. Set automatically if `None`.
+  - filled: float or function
+      - The method of making boxes invisible. If float the code removes the bottom(top) % of the bins. If function, must be of form f(x,y,z,dx,dy,dz,result,color), be vectorized, and return a np array of bools which are True if the box is plotted and False if not.
+  - filled_invert: bool
+      - If true, it inverts filled (so removes the top % of the data instead of bottom %). Has no impact if `filled` is a function.
+  - edgecolor_function: Function
+      - A function that takes in the facecolors and returns the edgecolors array. Can be useful if you want to shade your edge colors differently from your face colors (or change alpha).
+  - bins: int or list of ints of shape (3,)
+      - The number of bins to use. If a list, sets [X bins, Y bins, Z bins]. If an int, generates that number on each axis. 
+  - statistic: string
+      - The way to combine vals to generate the histogram. Input to scipy `binned_statistic_dd`. 
+      Note that `cplt3d` histograms generate densities, so whatever for statistic is computed, the number plotted is statistic/volume_of_bin.
+  - kwargs:
+      - Other arguments for voxelize (and the polygon collection). Note that `facecolor` and `edgecolor` are overriden.
 
 ---
 
 **Returns**
-- Function
-  - The instantiation of the normalization function used.
-- Poly3dCollection
-  - The polygons that are plotted.
-- Array
-  - The x values of the bins.
-- Array
-  - The y values of the bins.
-- Array
-  - The z values of the bins.
-- Array
-  - The dx widths of the bins.
-- Array
-  - The dy widths of the bins.
-- Array
-  - The dz widths of the bins.
-- Array
-  - Values of the bins.
+  - Function
+      - The instantiation of the normalization function used.
+  - Poly3dCollection
+      - The polygons that are plotted.
+  - Array
+      - The x values of the bins.
+  - Array
+      - The y values of the bins.
+  - Array
+      - The z values of the bins.
+  - Array
+      - The dx widths of the bins.
+  - Array
+      - The dy widths of the bins.
+  - Array
+      - The dz widths of the bins.
+  - Array
+      - Values of the bins.
 
 ---
 
@@ -128,56 +129,55 @@ Which leads to the figure:
 ---
 
 **Parameters**
-        
   - ax : Axis
-      - The axis on which to plot the points
+      - The axis on which to plot the points.
   - pts : array of shape (N,3)
-      - The points to plot
+      - The points to plot.
   - vals: array of shape (N,)
-      - The values to plot that are associated with each point
+      - The values to plot that are associated with each point. For histograms, use an array of ones.
   - cmap: Colormap
       - The colormap to use while plotting, strongly recommended to have a gradient in alpha.
   - norm: Function
-      - The normalization function to use. Colors are computed using cmap(NORM(x)) where NORM is the instantiation of norm with the correct vmax and vmin.
+      - The normalization function to use. Colors are computed using cmap(NORM(x)) where NORM is the instantiation of `norm` with the correct `vmax` and `vmin`.
   - vmin: float
-      - The minimum of the dynamic range. Set automatically if None.
+      - The minimum of the dynamic range. Set automatically if `None`.
   - vmax: float
-      - The maximum of the dynamic range. Set automatically if None.
+      - The maximum of the dynamic range. Set automatically if `None`.
   - _range: array of shape (3,2)
-      - The minima and maxima to generate bins within. Set automatically if None
+      - The minima and maxima to generate bins within. Should be of the form [[min_x,max_x],[min_y,max_y],[min_z,max_z]]. Set automatically if `None`.
   - filled: float or function
       - The method of making boxes invisible. If float the code removes the bottom(top) % of the bins. If function, must be of form f(x,y,z,dx,dy,dz,result,color), be vectorized, and return a np array of bools which are True if the box is plotted and False if not.
   - filled_invert: bool
-      - If true, it inverts filled (so removes the top % of the data instead of bottom %). Has no impact if filled is a function.
+      - If true, it inverts filled (so removes the top % of the data instead of bottom %). Has no impact if `filled` is a function.
   - edgecolor_function: Function
-      - A function that takes in the facecolors and returns the edgecolors array. Can be useful if you want to shade your edge colors differently from your face colors (or change alpha)
+      - A function that takes in the facecolors and returns the edgecolors array. Can be useful if you want to shade your edge colors differently from your face colors (or change alpha).
   - bins: int or list of ints of shape (3,)
       - The number of bins to use. If a list, sets [X bins, Y bins, Z bins]. If an int, generates that number on each axis. 
   - kwargs:
-      - Other arguments for voxelize (and the polygon collection). facecolor and edgecolor are overriden.
+      - Other arguments for voxelize (and the polygon collection). Note that `facecolor` and `edgecolor` are overriden.
 
 ---
 
 **Returns**
         
   - Function
-    - The instantiation of the normalization function used.
+      - The instantiation of the normalization function used.
   - Poly3dCollection
-    - The polygons that are plotted.
+      - The polygons that are plotted.
   - Array
-    - The x values of the bins.
+      - The x values of the bins.
   - Array
-    - The y values of the bins.
+      - The y values of the bins.
   - Array
-    - The z values of the bins.
+      - The z values of the bins.
   - Array
-    - The dx widths of the bins.
+      - The dx widths of the bins.
   - Array
-    - The dy widths of the bins.
+      - The dy widths of the bins.
   - Array
-    - The dz widths of the bins.
+      - The dz widths of the bins.
   - Array
-    - Values of the bins.
+      - Values of the bins.
 
 ---
 
@@ -245,76 +245,73 @@ This is an experimental histogram plotter that uses different bin sizes to "zoom
   **Parameters**
         
   - ax : Axis
-    - The axis on which to plot the points
+      - The axis on which to plot the points.
   - pts : array of shape (N,3)
-    - The points to plot
+      - The points to plot.
   - vals: array of shape (N,)
-    - The values to plot that are associated with each point
+      - The values to plot that are associated with each point. For histograms, use an array of ones.
   - cmap: Colormap
-    - The colormap to use while plotting, strongly recommended to have a gradient in alpha.
+      - The colormap to use while plotting, strongly recommended to have a gradient in alpha.
   - norm: Function
-    - The normalization function to use. Colors are computed using cmap(NORM(x)) where NORM is the instantiation of norm with the correct vmax and vmin.
+      - The normalization function to use. Colors are computed using cmap(NORM(x)) where NORM is the instantiation of `norm` with the correct `vmax` and `vmin`.
   - vmin: float
-    - The minimum of the dynamic range. Set automatically if None.
+      - The minimum of the dynamic range. Set automatically if `None`.
   - vmax: float
-    - The maximum of the dynamic range. Set automatically if None.
+      - The maximum of the dynamic range. Set automatically if `None`.
   - _range: array of shape (3,2)
-    - The minima and maxima to generate bins within. Set automatically if None
+      - The minima and maxima to generate bins within. Should be of the form [[min_x,max_x],[min_y,max_y],[min_z,max_z]]. Set automatically if `None`.
   - filled: float or function
-    - The method of making boxes invisible. If float the code removes the bottom(top) % of the bins. If function, must be of form f(x,y,z,dx,dy,dz,result,color), be vectorized, and return a np array of bools which are True if the box is plotted and False if not.
+      - The method of making boxes invisible. If float the code removes the bottom(top) % of the bins. If function, must be of form f(x,y,z,dx,dy,dz,result,color), be vectorized, and return a np array of bools which are True if the box is plotted and False if not.
   - filled_invert: bool
-    - If true, it inverts filled (so removes the top % of the data instead of bottom %). Has no impact if filled is a function.
+      - If true, it inverts filled (so removes the top % of the data instead of bottom %). Has no impact if `filled` is a function.
   - edgecolor_function: Function
-    - A function that takes in the facecolors and returns the edgecolors array. Can be useful if you want to shade your edge colors differently from your face colors (or change alpha)
-  - min_resolution: int or None
-    - The minimum resolution to use. Note this is log2(bins) at minimal bin size. If `None`, will compute the min_resolution as one higher resolution step than the minimal resolution to have an empty bin (or max_resolution + 1 if max_resolution is specified and smaller). 
-  - max_resolution: int or None
-    - The maximum resolution to use. Note that this is log2(bins) at maximal **bin** size. If `None`, will compute the resolution such that the bin size is as close to the average volume per particle (or min_resolution + 1 if min_resolution < that).
-  - dist: list of floats or None
-    - The distribution of percentages of volumes for each. Must sum to 1 and have a length = max_resolution - min_resolution + 1. For example [0.5,0.5] would cause the code to make as close to half the bins as possible level min_resolution bins and half the bins level max_resolution bins. 
-    - If `"equivolume"` or `None` then will automatically generate the distribution as
-    $$
-    dist(L) = 1/N
-    $$
-    So each level takes up the same volume.
-    - If `"sigmoid"` then will use a sigmoid distribution which is then normalized by the equivolume distribution. i.e. the un-normalized distribution takes the form:
+      - A function that takes in the facecolors and returns the edgecolors array. Can be useful if you want to shade your edge colors differently from your face colors (or change alpha).
+  - min_resolution: int
+      - The minimum resolution to use. Note this is log2(bins) at minimal bin size. If `None`, will compute the min_resolution as one higher resolution step than the minimal resolution to have an empty bin (or `max_resolution` + 1 if `max_resolution` is specified and smaller).
+  - max_resolution: int
+      - The maximum resolution to use. Note that this is log2(bins) at maximal bin size. If `None`, will will compute the resolution such that the bin size is as close to the average volume per particle (or `min_resolution` + 1 if `min_resolution` < that).
+  - dist: list of floats, String, or None
+      - The distribution of percentages of volumes for each. Must sum to 1 and have a `length = max_resolution - min_resolution + 1`. For example [0.5,0.5] would cause the code to make as close to half the bins as possible level `min_resolution` bins and half the bins level `max_resolution` bins. 
+      - If `"equivolume"` or `None` then will automatically generate the distribution as
+      $$
+      dist(L) = 1/N
+      $$
+      So each level takes up the same volume.
+      - If `"sigmoid"` then will use a sigmoid distribution which is then normalized by the equivolume distribution. i.e. the un-normalized distribution takes the form:
 
-    $$
-    dist(L) = \frac{2}{1 + e^{2.1(L - \sqrt{\frac{1}{n}\sum_{\min}^{\max}n^2})}}\left (\frac{1}{2^{3L}}\right )^1.25
-    $$
+      $$
+      dist(L) = \frac{2}{1 + e^{2.1(L - \sqrt{\frac{1}{n}\sum_{\min}^{\max}n^2})}}\left (\frac{1}{2^{3L}}\right )^1.25
+      $$
 
-    The code distributes bins according to these volumes percentages as closely as possible. When there is overflow, it adds the overflow percentage to the next bin size.  
-
-  <!-- - bins: int or float -->
-    <!-- - int: The total number of bins. This will not be the exact number of bins plotted, but will be the ballpark number which is aimed for while the program allocates bin sizes using `dist`. -->
-    - float: The percentage of volume taken up by the smallest bin size. Should be very small, especially for small bins, to prevent rendering issues. 
+      The code distributes bins according to these volumes percentages as closely as possible. When there is overflow, it adds the overflow percentage to the next bin size.
   - focus: string
-    - How the code determines where to make smaller bins. The current two foci are 'slope' which extracts a percent with the largest slopes and 'magnitude' which extracts a percent with the largest magnitude.
+      - How the code determines where to make smaller bins. The current two foci are 'slope' which extracts a percent with the largest slopes (calculated by comparing sub-bin values) and 'magnitude' which extracts a percent with the largest magnitude.
   - kwargs:
-    - Other arguments for voxelize (and the polygon collection). facecolor and edgecolor are overriden.
+      - Other arguments for voxelize (and the polygon collection). facecolor and edgecolor are overriden.
+
 
 ---
 
 **Returns**
         
-  Function
-      The instantiation of the normalization function used.
-  Poly3dCollection
-      The polygons that are plotted.
-  Array
-      The x values of the bins.
-  Array
-      The y values of the bins.
-  Array
-      The z values of the bins.
-  Array
-      The dx widths of the bins.
-  Array
-      The dy widths of the bins.
-  Array
-      The dz widths of the bins.
-  Array
-      Values of the bins.
+  - Function
+      - The instantiation of the normalization function used.
+  - Poly3dCollection
+      - The polygons that are plotted.
+  - Array
+      - The x values of the bins.
+  - Array
+      - The y values of the bins.
+  - Array
+      - The z values of the bins.
+  - Array
+      - The dx widths of the bins.
+  - Array
+      - The dy widths of the bins.
+  - Array
+      - The dz widths of the bins.
+  - Array
+      - Values of the bins.
 
 ---
 
@@ -348,7 +345,7 @@ cplt3d comes equipped with two functions to make it easy to animate plots, espec
   - func : Function
       - A function that takes in a frame from frames and performs any modifications necessary to the axes.
   - frames : list
-      - A list of inputs to func.
+      - A list of inputs to `func`.
   - result_name: str
       - The filename that the code saves the animation to.
   - out: str
@@ -358,13 +355,16 @@ cplt3d comes equipped with two functions to make it easy to animate plots, espec
   - parallel: bool
       - Whether or not to parallelize saving the frames of the animation.    
   - Animation_Generation_Folder: str
-      - The folder to generate the animation frames without. If set to None will create folder with random integer name in the working directory.
+      - The folder to generate the animation frames within. 
+      If set to `None` will create folder with random integer name in the working directory.
+      Note that this can error if you have already created such a directory, not deleted it, and have fixed the random seed.
+      In such a case, deleting the old directory or changing its name will solve the problem.
   - delete: bool
-      - Whether or not to delete the Animation_Generation_Folder and all of the frames within upon completion of the animation.
+      - Whether or not to delete the `Animation_Generation_Folder` and all of the frames within upon completion of the animation.
   - merge: bool
       - Whether or not to merge the frames into an actual animation. 
   - kwargs:
-      - Arguments for the `savefig` operation on `fig`.
+      - Arguments for the `savefig` operation on `fig`
 
 ---
 
@@ -384,31 +384,36 @@ cplt3d comes equipped with two functions to make it easy to animate plots, espec
   - fig : Figure
       - The figure which contains the axes to rotate
   - axs : Axis or list
-      - The axis on which to plot the points. If given a list it will animate all of the axes in the list (useful for animating a multi-cell plot). Make sure that all the axes are in the 3d projection!
+      - The axis on which to plot the points. 
+      If given a list it will animate all of the axes in the list (useful for animating a multi-cell plot). 
+      Make sure that all the axes are in the 3d projection!
   - result_name : str
-      - The name of the file to save the animation to
+      - The name of the file to save the animation to.
   - times: float
       - The number of times to rotate. i.e. the function will rotate the plot int(360 * times) degrees.
   - step: int
-      - The step size of the animation. i.e. the function will rotate the plot in steps of `step` degrees
+      - The step size of the animation. i.e. the function will rotate the plot in steps of `step` degrees.
   - parallel: bool
       - Whether or not to parallelize saving the frames of the animation.
   - axis: str (or 3d vector)
-      - The axis to rotate around. Currently, only 'x', 'y', and 'z' are implemented. TODO implement 3d vector to rotate about arbitrary axis. 
+      - The axis to rotate around. Currently, only 'x', 'y', and 'z' are implemented. It is recommended to use `z`.
   - fps: int
       - The frames per second of the animation. 
   - Animation_Generation_Folder: str
-      - The folder to generate the animation frames without. If set to None will create folder with random integer name in the working directory.
+      - The folder to generate the animation frames within. 
+      If set to `None` will create folder with random integer name in the working directory.
+      Note that this can error if you have already created such a directory, not deleted it, and have fixed the random seed.
+      In such a case, deleting the old directory or changing its name will solve the problem.
   - delete: bool
-      - Whether or not to delete the Animation_Generation_Folder and all of the frames within upon completion of the animation
+      - Whether or not to delete the `Animation_Generation_Folder` and all of the frames within upon completion of the animation.
   - merge: bool
       - Whether or not to merge the frames into an actual animation. 
-  - kwargs:
-      - Arguments for the general parallel animation generation function.
+  - **kwargs:
+      - Arguments for the general parallel animation generation function. Contains both:
           - out: str
-              The filetype of the animation. Default is `.gif`
+              The filetype of the animation. Default is `.gif`.
           - kwargs
-              What to input into the `fig` `savefig` method when saving frames (e.g. dpi)
+              What to input into the `fig` `savefig` method when saving frames (e.g. dpi).
   
   ---
   

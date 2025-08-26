@@ -9,9 +9,9 @@ setuptools.setup(
     version="0.1",
     author="Benjamin Cohen",
     author_email="benmckcohen@uchicago.edu",
-    description="A utility for plotting histograms and functions in 3d using voxels",
+    description="A package for nifty 3d plotting in matplotlib",
     packages=["cplt3d"],
-    install_requires = ['numpy','scipy','matplotlib'],
+    install_requires = ['numpy','scipy','matplotlib','imageio'],
     long_description=long_description,
     long_description_content_type="text/markdown",
     license='MIT'
