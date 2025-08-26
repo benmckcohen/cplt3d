@@ -6,7 +6,7 @@ with open(f"{os.path.dirname(__file__)}/README.md", "r") as fh:
 
 setuptools.setup(
     name="cplt3d",
-    version="0.1",
+    version="0.2",
     author="Benjamin Cohen",
     author_email="benmckcohen@uchicago.edu",
     description="A package for nifty 3d plotting in matplotlib",
