@@ -24,7 +24,10 @@ def volume_plot(fetch_coordinates):
             filled = 0.2,filled_invert = False,
             edgecolor_function = edgecolor_funcs.none_func,
             **kwargs):
-        '''A general function that actually plots the voxels. Needs to wrap a way to generate the values and box positions from the input pts and vals.
+        '''A general function that actually plots the voxels. 
+        
+        This function plots voxels. Needs to wrap a way to generate the values and box positions from the input pts and vals.
+        
         Parameters
         ----------
         ax : Axis
@@ -42,13 +45,13 @@ def volume_plot(fetch_coordinates):
         vmax: float
             The maximum of the dynamic range. Set automatically if None.
         _range: array of shape (3,2)
-            The minima and maxima to generate bins within. Set automatically if None
+            The minima and maxima to generate bins within. Set automatically if None.
         filled: float or function
             The method of making boxes invisible. If float the code removes the bottom(top) % of the bins. If function, must be of form f(x,y,z,dx,dy,dz,result,color), be vectorized, and return a np array of bools which are True if the box is plotted and False if not.
         filled_invert: bool
             If true, it inverts filled (so removes the top % of the data instead of bottom %). Has no impact if filled is a function.
         edgecolor_function: Function
-            A function that takes in the facecolors and returns the edgecolors array. Can be useful if you want to shade your edge colors differently from your face colors (or change alpha)
+            A function that takes in the facecolors and returns the edgecolors array. Can be useful if you want to shade your edge colors differently from your face colors (or change alpha).
         **kwargs:
             Other arguments for voxelize (and the polygon collection). facecolor and edgecolor are overriden.
 

@@ -9,14 +9,7 @@ _vertices = np.array([
     [0, 0, 1], [1, 0, 1], [1, 1, 1], [0, 1, 1]   # Top face
 ])
 
-# faces = [
-#     [_vertices[0], _vertices[1], _vertices[2], _vertices[3]],  # Bottom
-#     [_vertices[4], _vertices[5], _vertices[6], _vertices[7]],  # Top
-#     [_vertices[0], _vertices[1], _vertices[5], _vertices[4]],  # Front
-#     [_vertices[3], _vertices[2], _vertices[6], _vertices[7]],  # Back
-#     [_vertices[0], _vertices[3], _vertices[7], _vertices[4]],  # Left
-#     [_vertices[1], _vertices[2], _vertices[6], _vertices[5]]   # Right
-# ]
+
 
 def get_face(v,a,b,c,d):
     '''Prepares a cube face from the vertices list.
