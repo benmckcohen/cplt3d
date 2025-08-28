@@ -93,7 +93,7 @@ if __name__ == '__main__':
     res = tree_histogram(ax2,coords,vals,cmap = linear_cmap,verbose = True, #norm = LogNorm,
                                         vmin = 1, vmax = 6000,dist = 'sigmoid',
                                         min_resolution = 1,max_resolution = 9,focus='magnitude',
-                                        filled=0.2,bins=50000)
+                                        filled=0.2)
     norm = res[0]
     poly = res[2]
 

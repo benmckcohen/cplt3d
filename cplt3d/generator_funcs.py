@@ -778,7 +778,8 @@ def tree_histogram(pts,vals,X,Y,Z,dX,dY,dZ,statistic = 'sum'):
     return _histogram(pts,vals,X,Y,Z,dX,dY,dZ,statistic = statistic)/(dX*dY*dZ)
 
 def parallel_animate(fig,func,frames,result_name,
-                     out = 'gif',fps = 50,parallel = True,Animation_Generation_Folder = None,
+                     out = 'gif',fps = 50,parallel = True,num_cpu = None,
+                     Animation_Generation_Folder = None,
                      delete = True,merge = True,**kwargs):
     '''A function that generates an animation based on an input function. 
     
@@ -804,6 +805,8 @@ def parallel_animate(fig,func,frames,result_name,
         The frames per second of the animation. 
     parallel: bool
         Whether or not to parallelize saving the frames of the animation.    
+    num_cpu: int or None
+        How many cpus to use. If `None` will use the maximal number. Not used if `parallel = False`.
     Animation_Generation_Folder: str
         The folder to generate the animation frames within. 
         If set to `None` will create folder with random integer name in the working directory.
@@ -826,10 +829,13 @@ def parallel_animate(fig,func,frames,result_name,
         delete = False
     
     N_cpu = multiprocess.cpu_count()
+    if num_cpu is None:
+        num_cpu = N_cpu
+    
     if parallel:
         print('setup for parallel run')
-        print(f"Using {N_cpu} cpus")
-        N_per = int(len(frames)/N_cpu)+1
+        print(f"Using {num_cpu} cpus")
+        N_per = int(len(frames)/num_cpu)+1
         frames_todo = [list(range(i,i+N_per)) for i in range(0,len(frames)-N_per,N_per)] 
         frames_todo += [list(range(frames_todo[-1][-1]+1,len(frames)))]
         # print(frames_todo)
@@ -883,7 +889,10 @@ def parallel_animate(fig,func,frames,result_name,
     print(f"generating {len(frames)} animation frames...")
 
     if parallel:
-        with multiprocess.Pool(N_cpu) as p:
+        if num_cpu is None:
+            num_cpu = N_cpu
+
+        with multiprocess.Pool(num_cpu) as p:
             p.map(save_on_array,list(range(len(frames_todo))))
                 
     else:
@@ -919,7 +928,7 @@ def parallel_animate(fig,func,frames,result_name,
     
 
 @helper.verbose_print
-def spin_3d_plot(fig,axs,result_name,times = 1,step = 1,parallel=True,
+def spin_3d_plot(fig,axs,result_name,times = 1,step = 1,parallel=True,num_cpu = None,
                  axis = 'z',fps = 50,Animation_Generation_Folder = None,
                  delete = True,merge = True,**kwargs):
     '''A function that generates an animation rotating the input 3d plot.
@@ -947,6 +956,8 @@ def spin_3d_plot(fig,axs,result_name,times = 1,step = 1,parallel=True,
         The step size of the animation. i.e. the function will rotate the plot in steps of `step` degrees.
     parallel: bool
         Whether or not to parallelize saving the frames of the animation.
+    num_cpu: int or None
+        How many cpus to use. If `None` will use the maximal number. Not used if `parallel = False`.
     axis: str (or 3d vector)
         The axis to rotate around. Currently, only 'x', 'y', and 'z' are implemented. It is recommended to use `z`.
     fps: int
@@ -999,5 +1010,6 @@ def spin_3d_plot(fig,axs,result_name,times = 1,step = 1,parallel=True,
                      result_name=result_name,
                      fps = fps,
                      parallel=parallel,
+                     num_cpu=num_cpu,
                      Animation_Generation_Folder=Animation_Generation_Folder,
                      delete = delete,merge = merge,**kwargs)
