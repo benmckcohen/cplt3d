@@ -958,8 +958,8 @@ def spin_3d_plot(fig,axs,result_name,times = 1,step = 1,parallel=True,num_cpu = 
         Whether or not to parallelize saving the frames of the animation.
     num_cpu: int or None
         How many cpus to use. If `None` will use the maximal number. Not used if `parallel = False`.
-    axis: str (or 3d vector)
-        The axis to rotate around. Currently, only 'x', 'y', and 'z' are implemented. It is recommended to use `z`.
+    axis: str
+        The axis to rotate around. Currently, only `x`, `y`, and `z` are implemented. It is recommended to use `z`.
     fps: int
         The frames per second of the animation. 
     Animation_Generation_Folder: str
